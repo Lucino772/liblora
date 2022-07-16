@@ -8,11 +8,13 @@ sx127x_dev_t sx127x_create(int spi_dev, int spi_ss, int dio0, int rst)
 {
     wiringPiSetup(); // FIXME: This class should not interfere with wiringPi (abstract wiringPi)
 
-    return sx127x_dev_t{
-        spi_dev,
-        spi_ss,
-        dio0,
-        rst};
+    sx127x_dev_t ret = {
+        .spi_dev = spi_dev,
+        .spi_ss = spi_ss,
+        .dio0 = dio0,
+        .rst = rst};
+
+    return ret;
 }
 
 int sx127x_init(sx127x_dev_t dev, long freq, uint8_t sf, uint8_t bw)
@@ -63,11 +65,13 @@ int sx127x_init(sx127x_dev_t dev, long freq, uint8_t sf, uint8_t bw)
 sx127x_opmode_t sx127x_opmode_read(sx127x_dev_t dev)
 {
     uint8_t _opmode = spi_read(dev.spi_dev, dev.spi_ss, SX127x_REG_OPMODE);
-    return sx127x_opmode_t{
-        (_opmode & 0x80) == 0x80, // lora mode
-        (_opmode & 0x40) == 0x40, // shared reg
-        (_opmode & 0x04) == 0x04, // low freq. on
-        (uint8_t)(_opmode | 0x07)};
+    sx127x_opmode_t ret = {
+        .lora = (_opmode & 0x80) == 0x80,       // lora mode
+        .shared_reg = (_opmode & 0x40) == 0x40, // shared reg
+        .low_freq = (_opmode & 0x04) == 0x04,   // low freq. on
+        .mode = (uint8_t)(_opmode | 0x07)};
+
+    return ret;
 }
 
 void sx127x_opmode_write(sx127x_dev_t dev, sx127x_opmode_t _opmode)
@@ -98,7 +102,7 @@ void sx127x_idle(sx127x_dev_t dev)
     sx127x_opmode_write(dev, curr);
 }
 
-bool sx127x_receive(sx127x_dev_t dev, bool continuous = false)
+bool sx127x_receive(sx127x_dev_t dev, bool continuous)
 {
     // TODO: Check if transmitting, if so return false
 
@@ -139,7 +143,7 @@ sx127x_packet_t sx127x_get_packet(sx127x_dev_t dev)
     return pkt;
 }
 
-void sx127x_send(sx127x_dev_t dev, uint8_t *buffer, uint8_t len, bool async = false)
+void sx127x_send(sx127x_dev_t dev, uint8_t *buffer, uint8_t len, bool async)
 {
     // DIO0=TXDONE, DIO1=NOP, DIO2=NOP, DIO3=NOP
     spi_write(dev.spi_dev, dev.spi_ss, SX127x_REG_DIO_MAPPING_1, SX127x_DIO0_TX_DONE | SX127x_DIO1_NOP | SX127x_DIO2_NOP | SX127x_DIO3_NOP);
@@ -174,7 +178,7 @@ void sx127x_config_frequency(sx127x_dev_t dev, long freq)
     spi_write(dev.spi_dev, dev.spi_ss, SX127x_REG_FR_LSB, (uint8_t)(frf >> 0));
 }
 
-void sx127x_config_bandwidth(sx127x_dev_t dev, uint8_t bw, bool optimize = true)
+void sx127x_config_bandwidth(sx127x_dev_t dev, uint8_t bw, bool optimize)
 {
     uint8_t curr = spi_read(dev.spi_dev, dev.spi_ss, SX127x_REG_MODEM_CONFIG1);
     uint8_t _new = (bw << 4) | (curr & 0xF);
@@ -186,7 +190,7 @@ void sx127x_config_bandwidth(sx127x_dev_t dev, uint8_t bw, bool optimize = true)
         sx127x_config_high_bw_optimization(dev, false);
 }
 
-void sx127x_config_spreading_factor(sx127x_dev_t dev, uint8_t sf, bool optimize = true)
+void sx127x_config_spreading_factor(sx127x_dev_t dev, uint8_t sf, bool optimize)
 {
     uint8_t curr = spi_read(dev.spi_dev, dev.spi_ss, SX127x_REG_MODEM_CONFIG2);
     uint8_t _new = (sf << 4) | (curr & 0xF);
@@ -223,7 +227,7 @@ void sx127x_config_coding_rate(sx127x_dev_t dev, uint8_t cr)
     spi_write(dev.spi_dev, dev.spi_ss, SX127x_REG_MODEM_CONFIG1, _new);
 }
 
-void sx127x_config_invert_iq(sx127x_dev_t dev, bool enable, bool rx = true)
+void sx127x_config_invert_iq(sx127x_dev_t dev, bool enable, bool rx)
 {
     // TODO: Check if it's correct
     uint8_t curr = spi_read(dev.spi_dev, dev.spi_ss, SX127x_REG_INVERT_IQ);
@@ -420,7 +424,13 @@ sx127x_packet_t sx127x_read_packet(sx127x_dev_t dev)
 {
     // FIXME: In Explicit Header Mode (default), use Crc from REG_HOP_CHANNEL
 
-    sx127x_packet_t pkt{{}, 0, 0, 0, 0};
+    sx127x_packet_t pkt = {
+        .buffer = {},
+        .size = 0,
+        .pkt_snr = 0,
+        .pkt_rssi = 0,
+        .rssi = 0,
+        .strength = 0};
     uint8_t irq_flags = spi_read(dev.spi_dev, dev.spi_ss, SX127x_REG_IRQ_FLAGS);
     if ((irq_flags & SX127x_IRQ_RX_DONE) != 0)
     {

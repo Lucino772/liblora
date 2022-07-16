@@ -22,10 +22,10 @@ extern "C"
 
     typedef struct
     {
-        bool lora = false;
-        bool shared_reg = false;
-        bool low_freq = false;
-        uint8_t mode = SX127x_OPMODE_SLEEP;
+        bool lora;
+        bool shared_reg;
+        bool low_freq;
+        uint8_t mode;
     } sx127x_opmode_t;
 
     typedef struct

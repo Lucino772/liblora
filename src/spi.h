@@ -8,11 +8,11 @@ extern "C"
 
 #include <stdint.h>
 
-    int spi_driver_init(int dev, int ss, int clck_speed = 500000);
+    int spi_driver_init(int dev, int ss, int clck_speed);
 
     static void _spi_driver_select(int ss);
     static void _spi_driver_unselect(int ss);
-    static uint8_t _spi_read_write(uint8_t *buffer, int len);
+    static void _spi_read_write(int dev, int ss, uint8_t *buffer, int len);
 
     uint8_t spi_read(int dev, int ss, uint8_t reg);
     void spi_read_burst(int dev, int ss, uint8_t reg, uint8_t *buffer, int len);
