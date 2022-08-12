@@ -45,24 +45,24 @@ int liblora_rf95_init(liblora_rf95_radio_t radio, long freq, uint8_t sf, uint8_t
         return -1;
 
     // sleep & lora
-    liblora_rf95_opmode_t curr_opmode = liblora_rf95_opmode_read(dev);
+    liblora_rf95_opmode_t curr_opmode = liblora_rf95_opmode_read(radio);
     curr_opmode.lora = true;
     curr_opmode.mode = LIBLORA_RF95_OPMODE_SLEEP;
-    liblora_rf95_opmode_write(dev, curr_opmode);
+    liblora_rf95_opmode_write(radio, curr_opmode);
 
     // Configure
-    liblora_rf95_config_frequency(dev, freq);
-    liblora_rf95_config_bandwidth(dev, bw, true);
-    liblora_rf95_config_spreading_factor(dev, sf, true);
-    liblora_rf95_config_pa(dev, true, 17, 4);
-    liblora_rf95_config_lna(dev, true, 0);
-    liblora_rf95_config_agc(dev, true);
+    liblora_rf95_config_frequency(radio, freq);
+    liblora_rf95_config_bandwidth(radio, bw, true);
+    liblora_rf95_config_spreading_factor(radio, sf, true);
+    liblora_rf95_config_pa(radio, true, 17, 4);
+    liblora_rf95_config_lna(radio, true, 0);
+    liblora_rf95_config_agc(radio, true);
 
     // Reset fifo addresses
     spi_write(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_FIFO_TX_BASE_ADDR, 0x00);
     spi_write(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_FIFO_RX_BASE_ADDR, 0x00);
 
-    liblora_rf95_sleep(dev);
+    liblora_rf95_sleep(radio);
     return 0;
 }
 
@@ -95,16 +95,16 @@ void liblora_rf95_opmode_write(liblora_rf95_radio_t radio, liblora_rf95_opmode_t
 // opmode (public)
 void liblora_rf95_sleep(liblora_rf95_radio_t radio)
 {
-    liblora_rf95_opmode_t curr = liblora_rf95_opmode_read(dev);
+    liblora_rf95_opmode_t curr = liblora_rf95_opmode_read(radio);
     curr.mode = LIBLORA_RF95_OPMODE_SLEEP;
-    liblora_rf95_opmode_write(dev, curr);
+    liblora_rf95_opmode_write(radio, curr);
 }
 
 void liblora_rf95_idle(liblora_rf95_radio_t radio)
 {
-    liblora_rf95_opmode_t curr = liblora_rf95_opmode_read(dev);
+    liblora_rf95_opmode_t curr = liblora_rf95_opmode_read(radio);
     curr.mode = LIBLORA_RF95_OPMODE_STDBY;
-    liblora_rf95_opmode_write(dev, curr);
+    liblora_rf95_opmode_write(radio, curr);
 }
 
 bool liblora_rf95_recv(liblora_rf95_radio_t radio, bool continuous)
@@ -112,7 +112,7 @@ bool liblora_rf95_recv(liblora_rf95_radio_t radio, bool continuous)
     // TODO: Check if transmitting, if so return false
 
     uint8_t _mode = continuous ? LIBLORA_RF95_OPMODE_RX_CONT : LIBLORA_RF95_OPMODE_RX_SINGLE;
-    if (liblora_rf95_opmode_read(dev).mode != _mode)
+    if (liblora_rf95_opmode_read(radio).mode != _mode)
     {
         // DIO0=RXDONE, DIO1=NOP, DIO2=NOP, DIO3=NOP
         spi_write(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_DIO_MAPPING_1, LIBLORA_RF95_DIO0_RX_DONE | LIBLORA_RF95_DIO1_NOP | LIBLORA_RF95_DIO2_NOP | LIBLORA_RF95_DIO3_NOP);
@@ -122,9 +122,9 @@ bool liblora_rf95_recv(liblora_rf95_radio_t radio, bool continuous)
         spi_write(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_IRQ_FLAGS_MASK, LIBLORA_RF95_IRQ_TX_DONE | LIBLORA_RF95_IRQ_CAD_DONE | LIBLORA_RF95_IRQ_FHSS_CHANGE_CHAN | LIBLORA_RF95_IRQ_CAD_DETECTED);
 
         // Change OpMode
-        liblora_rf95_opmode_t curr = liblora_rf95_opmode_read(dev);
+        liblora_rf95_opmode_t curr = liblora_rf95_opmode_read(radio);
         curr.mode = _mode;
-        liblora_rf95_opmode_write(dev, curr);
+        liblora_rf95_opmode_write(radio, curr);
     }
 
     return true;
@@ -140,9 +140,9 @@ void liblora_rf95_send(liblora_rf95_radio_t radio, bool async)
     spi_write(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_IRQ_FLAGS_MASK, ~(LIBLORA_RF95_IRQ_TX_DONE));
 
     // OPMODE_TX: Transmit packet
-    liblora_rf95_opmode_t curr = liblora_rf95_opmode_read(dev);
+    liblora_rf95_opmode_t curr = liblora_rf95_opmode_read(radio);
     curr.mode = LIBLORA_RF95_OPMODE_TX;
-    liblora_rf95_opmode_write(dev, curr);
+    liblora_rf95_opmode_write(radio, curr);
 
     // wait for TxDone
     if (!async)
@@ -430,15 +430,15 @@ liblora_rf95_packet_t liblora_rf95_packet_read(liblora_rf95_radio_t radio)
         }
         else
         {
-            pkt.size = liblora_rf95_packet_size(dev);
+            pkt.size = liblora_rf95_packet_size(radio);
 
             spi_write(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_FIFO_ADDR_PTR, spi_read(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_FIFO_RX_CURR_ADDR));
-            liblora_rf95_fifo_read(dev, pkt.buffer, pkt.size);
+            liblora_rf95_fifo_read(radio, pkt.buffer, pkt.size);
 
-            pkt.pkt_snr = liblora_rf95_packet_snr(dev);
-            pkt.pkt_rssi = liblora_rf95_packet_rssi(dev);
-            pkt.rssi = liblora_rf95_rssi(dev);
-            pkt.strength = liblora_rf95_packet_strength(dev);
+            pkt.pkt_snr = liblora_rf95_packet_snr(radio);
+            pkt.pkt_rssi = liblora_rf95_packet_rssi(radio);
+            pkt.rssi = liblora_rf95_rssi(radio);
+            pkt.strength = liblora_rf95_packet_strength(radio);
         }
 
         // reset FIFO addr to RX base addr & reset IRQ flags
@@ -456,7 +456,7 @@ void liblora_rf95_packet_write(liblora_rf95_radio_t radio, uint8_t *buffer, uint
     spi_write(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_IRQ_FLAGS, 0xFF);
     spi_write(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_FIFO_ADDR_PTR, spi_read(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_FIFO_TX_BASE_ADDR));
     spi_write(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_PAYLOAD_LENGTH, len);
-    liblora_rf95_fifo_write(dev, buffer, len);
+    liblora_rf95_fifo_write(radio, buffer, len);
 }
 
 // other (public)
