@@ -4,4 +4,4 @@ cmake_minimum_required(VERSION 3.10)
 project(lora VERSION 0.1)
 
 # add the library
-add_library(lora STATIC ./src/spi.c ./src/sx127x/driver.c)
+add_library(lora STATIC ./src/spi.c ./src/rf95.c)
