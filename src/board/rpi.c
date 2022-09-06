@@ -1,4 +1,10 @@
-#include "./spi.h"
+/*
+ * Created on Tue Sep 6 2022
+ *
+ * Copyright (c) 2022 Lucino772
+ */
+
+#include "spi.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,9 +13,33 @@
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 
-int spi_driver_init(int dev, int ss, int clck_speed)
+// TODO: This code is only compiled when on raspberry
+//      and if wiringPi is installed.
+
+int board_setup()
 {
-    pinMode(ss, OUTPUT);
+    wiringPiSetup();
+}
+
+int board_pin_mode(int pin, int mode)
+{
+    pinMode(pin, mode);
+}
+
+void board_digital_write(int pin, int val)
+{
+    digitalWrite(pin, val);
+}
+
+void board_delay(int ms)
+{
+    delay(ms);
+}
+
+
+int board_spi_init(int dev, int ss, int clck_speed)
+{
+    board_pin_mode(ss, OUTPUT);
     if (wiringPiSPISetup(dev, clck_speed) == -1)
     {
         perror("Faile to initialize SPI");
@@ -21,12 +51,12 @@ int spi_driver_init(int dev, int ss, int clck_speed)
 
 static void _spi_driver_select(int ss)
 {
-    digitalWrite(ss, LOW);
+    board_digital_write(ss, LOW);
 }
 
 static void _spi_driver_unselect(int ss)
 {
-    digitalWrite(ss, HIGH);
+    board_digital_write(ss, HIGH);
 }
 
 static void _spi_read_write(int dev, int ss, uint8_t *buffer, int len)
