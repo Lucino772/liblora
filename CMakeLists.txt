@@ -28,13 +28,18 @@ set_target_properties(${TARGET} PROPERTIES
                         SOVERSION ${PROJECT_VERSION_MAJOR})
 
 # Add include directory for liblora
-target_include_directories (${TARGET} PUBLIC 
+target_include_directories (${TARGET} PUBLIC
                             ${CMAKE_CURRENT_SOURCE_DIR}/include
                             ${CMAKE_INSTALL_PREFIX}/include)
 
 
+                            
+# Required for cross compiling to find wiringPi
+target_link_directories(${TARGET} PUBLIC 
+                            ${CMAKE_INSTALL_PREFIX}/lib)
+                            
 # Add the following required libraries: WiringPi
-target_link_libraries(${TARGET} wiringpi)
+target_link_libraries(${TARGET} wiringPi)
 
 # Add install
 install(TARGETS ${TARGET} DESTINATION lib)
