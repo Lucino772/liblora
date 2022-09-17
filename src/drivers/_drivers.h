@@ -9,6 +9,11 @@
 
 #include "../include/drivers.h"
 
+#define INPUT       0
+#define OUTPUT      1
+#define LOW         0
+#define HIGH        1
+
 #define liblora_driver_setup(driver) driver->setup(driver->config)
 #define liblora_driver_pin_mode(driver, pin, sel) driver->pin_mode(pin, sel, driver->config)
 #define liblora_driver_pin_write(driver, pin, val) driver->pin_write(pin, val, driver->config)

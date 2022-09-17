@@ -7,6 +7,7 @@
 #ifndef _LIBLORA_PRIVATE_RF95_H_
 #define _LIBLORA_PRIVATE_RF95_H_
 
+#include "drivers/_drivers.h"
 #include "../include/rf95.h"
 
 /**============================================
