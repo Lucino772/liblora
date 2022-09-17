@@ -14,9 +14,8 @@ set(lora_src
 
 # Headers file
 set(lora_h
-    ./include/rf95.h ./src/_rf95.h
-    ./include/drivers.h ./src/drivers/_drivers.h
-    ./src/utils.h
+    ./include/rf95.h
+    ./include/drivers.h
 )
 
 # Add library target
