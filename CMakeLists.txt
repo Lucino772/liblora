@@ -1,19 +1,41 @@
 cmake_minimum_required(VERSION 3.10)
 
-# set project name (with version)
-project(lora VERSION 0.1)
+set(VERSION 0.1)
 
-set(lorasrcs ./src/spi.c ./src/rf95.c)
-set(loraheaders ./include/rf95.h)
+project(lora VERSION ${VERSION})
+set(TARGET lora)
 
-add_library(loraobjlib OBJECT ${lorasrcs})
-set_property(TARGET loraobjlib PROPERTY POSITION_INDEPENDENT_CODE 1)
+# Source Files
+set(lora_src
+    ./src/rf95.c ./src/utils.c
+    ./src/drivers/drivers.c
+    ./src/drivers/wiringpi.c
+)
 
-# add the library
-add_library(lora_shared SHARED $<TARGET_OBJECTS:loraobjlib>)
-add_library(lora_static STATIC $<TARGET_OBJECTS:loraobjlib>)
+# Headers file
+set(lora_h
+    ./include/rf95.h ./src/_rf95.h
+    ./include/drivers.h ./src/drivers/_drivers.h
+    ./src/utils.h
+)
 
-# install library & header files
-install(TARGETS lora_shared DESTINATION lib)
-install(TARGETS lora_static DESTINATION lib)
-install(FILES ${loraheaders} DESTINATION include)
+# Add library target
+add_library (${TARGET} SHARED ${lora_src})
+
+# Version
+set_target_properties(${TARGET} PROPERTIES
+                        VERSION ${PROJECT_VERSION}
+                        SOVERSION ${PROJECT_VERSION_MAJOR})
+
+# Add include directory for liblora
+target_include_directories (${TARGET} PUBLIC 
+                            ${CMAKE_CURRENT_SOURCE_DIR}/include
+                            ${CMAKE_INSTALL_PREFIX}/include)
+
+
+# Add the following required libraries: WiringPi
+target_link_libraries(${TARGET} wiringpi)
+
+# Add install
+install(TARGETS ${TARGET} DESTINATION lib)
+install(FILES ${lora_h} DESTINATION include)
