@@ -59,11 +59,10 @@ extern "C"
 
     #include <stdbool.h>
     #include <stdint.h>
+    #include "drivers.h"
 
     typedef struct {
-        uint8_t type;
-        int spi_dev;
-        int spi_ss;
+        liblora_driver_t* driver;
         int dio0;
         int rst;
     } liblora_rf95_radio_t;
@@ -90,7 +89,7 @@ extern "C"
 
 
     // Init (public)
-    liblora_rf95_radio_t liblora_rf95_radio(int spi_dev, int spi_ss, int dio0, int rst);
+    liblora_rf95_radio_t liblora_rf95_radio(liblora_driver_t* driver, int dio0, int rst);
     int liblora_rf95_init(liblora_rf95_radio_t radio, long freq, uint8_t sf, uint8_t bw);
 
     // opmode (public)

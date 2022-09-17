@@ -5,16 +5,14 @@
  */
 
 #include "_rf95.h"
-#include "board/board.h"
 
 // Initialisation
-liblora_rf95_radio_t liblora_rf95_radio(int spi_dev, int spi_ss, int dio0, int rst)
+liblora_rf95_radio_t liblora_rf95_radio(liblora_driver_t* driver, int dio0, int rst)
 {
-    board_setup();
+    liblora_driver_setup(driver);
 
     liblora_rf95_radio_t ret = {
-        .spi_dev = spi_dev,
-        .spi_ss = spi_ss,
+        .driver = driver,
         .dio0 = dio0,
         .rst = rst};
 
@@ -23,23 +21,23 @@ liblora_rf95_radio_t liblora_rf95_radio(int spi_dev, int spi_ss, int dio0, int r
 
 int liblora_rf95_init(liblora_rf95_radio_t radio, long freq, uint8_t sf, uint8_t bw)
 {
-    board_pin_mode(radio.dio0, INPUT);
-    board_pin_mode(radio.rst, OUTPUT);
+    liblora_driver_pin_mode(radio.driver, radio.dio0, INPUT);
+    liblora_driver_pin_mode(radio.driver, radio.rst, OUTPUT);
 
     // Reset chip
     if (radio.rst != -1)
     {
-        board_digital_write(radio.rst, LOW);
-        board_delay(100);
-        board_digital_write(radio.rst, HIGH);
-        board_delay(100);
+        liblora_driver_pin_write(radio.driver, radio.rst, LOW);
+        liblora_driver_delay(radio.driver, 100);
+        liblora_driver_pin_write(radio.driver, radio.rst, HIGH);
+        liblora_driver_delay(radio.driver, 100);
     }
 
-    if (board_spi_init(radio.spi_dev, radio.spi_ss, 500000) == -1)
+    if (liblora_driver_spi_init(radio.driver) == -1)
         return -1;
 
     // check version
-    uint8_t ver = board_spi_read(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_VERSION);
+    uint8_t ver = liblora_driver_spi_read(radio.driver, LIBLORA_RF95_REG_VERSION);
     if (ver != 0x12)
         return -1;
 
@@ -58,8 +56,8 @@ int liblora_rf95_init(liblora_rf95_radio_t radio, long freq, uint8_t sf, uint8_t
     liblora_rf95_config_agc(radio, true);
 
     // Reset fifo addresses
-    board_spi_write(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_FIFO_TX_BASE_ADDR, 0x00);
-    board_spi_write(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_FIFO_RX_BASE_ADDR, 0x00);
+    liblora_driver_spi_write(radio.driver, LIBLORA_RF95_REG_FIFO_TX_BASE_ADDR, 0x00);
+    liblora_driver_spi_write(radio.driver, LIBLORA_RF95_REG_FIFO_RX_BASE_ADDR, 0x00);
 
     liblora_rf95_sleep(radio);
     return 0;
@@ -68,7 +66,7 @@ int liblora_rf95_init(liblora_rf95_radio_t radio, long freq, uint8_t sf, uint8_t
 // opmode (private)
 liblora_rf95_opmode_t liblora_rf95_opmode_read(liblora_rf95_radio_t radio)
 {
-    uint8_t _opmode = board_spi_read(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_OPMODE);
+    uint8_t _opmode = liblora_driver_spi_read(radio.driver, LIBLORA_RF95_REG_OPMODE);
     liblora_rf95_opmode_t ret = {
         .lora = (_opmode & 0x80) == 0x80,       // lora mode
         .shared_reg = (_opmode & 0x40) == 0x40, // shared reg
@@ -88,7 +86,7 @@ void liblora_rf95_opmode_write(liblora_rf95_radio_t radio, liblora_rf95_opmode_t
     if (_opmode.low_freq)
         _new |= 0x04;
 
-    board_spi_write(radio.spi_dev, radio.spi_ss, LIBLORA_RF95_REG_OPMODE, _new);
+    liblora_driver_spi_write(radio.driver, LIBLORA_RF95_REG_OPMODE, _new);
 }
 
 // opmode (public)
