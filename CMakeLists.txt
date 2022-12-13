@@ -4,6 +4,7 @@ set(VERSION 0.1)
 
 project(lora VERSION ${VERSION})
 set(TARGET lora)
+set(INCLUDE_DIR ./include/liblora)
 
 # Source Files
 set(lora_src
@@ -14,8 +15,8 @@ set(lora_src
 
 # Headers file
 set(lora_h
-    ./include/liblora/rf95.h
-    ./include/liblora/drivers.h
+    ${INCLUDE_DIR}/rf95.h
+    ${INCLUDE_DIR}/drivers.h
 )
 
 # Add library target
@@ -42,4 +43,4 @@ target_link_libraries(${TARGET} wiringPi)
 
 # Add install
 install(TARGETS ${TARGET} DESTINATION lib)
-install(FILES ${lora_h} DESTINATION include)
+install(DIRECTORY ${INCLUDE_DIR} DESTINATION include)
