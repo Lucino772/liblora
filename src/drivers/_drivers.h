@@ -14,6 +14,13 @@
 #define LOW         0
 #define HIGH        1
 
+// Interrupt levels
+
+#define	INT_EDGE_SETUP      0
+#define	INT_EDGE_FALLING    1
+#define	INT_EDGE_RISING     2
+#define	INT_EDGE_BOTH       3
+
 #define liblora_driver_setup(driver) driver->setup(driver->config)
 #define liblora_driver_pin_mode(driver, pin, sel) driver->pin_mode(pin, sel, driver->config)
 #define liblora_driver_pin_write(driver, pin, val) driver->pin_write(pin, val, driver->config)
