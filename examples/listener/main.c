@@ -2,8 +2,8 @@
 #include <signal.h>
 #include <stdbool.h>
 
-#include <drivers.h>
-#include <rf95.h>
+#include <liblora/drivers.h>
+#include <liblora/rf95.h>
 #include <wiringPi.h>
 
 liblora_driver_t* driver = NULL;
