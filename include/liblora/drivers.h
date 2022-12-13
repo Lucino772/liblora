@@ -33,7 +33,7 @@ extern "C"
         void (*spi_write_burst)(uint8_t, uint8_t *, int, void *);
 
         // Interrupts
-        void (*attach_interrupt)(int, int, void (*function)(int));
+        void (*attach_interrupt)(int, int, void (*)(int), void*);
     } liblora_driver_t;
 
     liblora_driver_t *liblora_driver_wiringpi(int spi_dev, int spi_ss);

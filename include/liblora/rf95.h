@@ -61,15 +61,6 @@ extern "C"
     #include <stdint.h>
     #include "drivers.h"
 
-    typedef struct {
-        liblora_driver_t* driver;
-        int dio0;
-        int rst;
-
-        void (*onrx)(liblora_rf95_packet_t);
-        void (*ontx)(void);
-    } liblora_rf95_radio_t;
-
     typedef struct
     {
         uint8_t buffer[256];
@@ -79,6 +70,15 @@ extern "C"
         uint8_t rssi;
         uint8_t strength;
     } liblora_rf95_packet_t;
+
+    typedef struct {
+        liblora_driver_t* driver;
+        int dio0;
+        int rst;
+
+        void (*onrx)(liblora_rf95_packet_t);
+        void (*ontx)(void);
+    } liblora_rf95_radio_t;
 
     typedef enum
     {

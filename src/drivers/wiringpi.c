@@ -178,7 +178,7 @@ void _wiringpi_isr_callback_pin61(void) { _wiringpi_isr_callback(61); }
 void _wiringpi_isr_callback_pin62(void) { _wiringpi_isr_callback(62); }
 void _wiringpi_isr_callback_pin63(void) { _wiringpi_isr_callback(63); }
 
-void _wiringpi_attach_interrupt(int pin, int edge_type, void(*callback)(int))
+void _wiringpi_attach_interrupt(int pin, int edge_type, void(*callback)(int), void* config)
 {
     wiringpi_isr_callbacks[pin] = callback;
 
