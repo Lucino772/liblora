@@ -17,21 +17,13 @@ void sig_term_handler(int sig)
     running = false;
 }
 
-void on_dio0_rise()
+void on_receive(liblora_rf95_packet_t pkt)
 {
-    int reason = liblora_rf95_handle_interrupt(radio);
-    if (reason == 1)        // RX DONE
+    if (pkt.size > 0)
     {
-        liblora_rf95_packet_t pkt = liblora_rf95_packet_read(radio);
-        if (pkt.size > 0)
-        {
-            printf("Packet received (%i bytes): %s\n", pkt.size, pkt.buffer);
-        } else {
-            printf("Something went wrong !\n");
-        }
-    } else if (reason == 2) // TX DONE
-    {
-        printf("Packet sent !\n");
+        printf("Packet received (%i bytes): %s\n", pkt.size, pkt.buffer);
+    } else {
+        printf("Something went wrong !\n");
     }
 }
 
@@ -59,7 +51,8 @@ int main()
     }
 
     // configure interrupts
-    wiringPiISR(7, INT_EDGE_RISING, on_dio0_rise);
+    // wiringPiISR(7, INT_EDGE_RISING, on_dio0_rise);
+    liblora_rf95_onrx(radio, on_receive);
 
     if (!liblora_rf95_recv(radio, true))
         perror("Failed to put in RX_CONT mode");

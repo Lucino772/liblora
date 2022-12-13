@@ -65,6 +65,9 @@ extern "C"
         liblora_driver_t* driver;
         int dio0;
         int rst;
+
+        void (*onrx)(liblora_rf95_packet_t);
+        void (*ontx)(void);
     } liblora_rf95_radio_t;
 
     typedef struct
@@ -120,7 +123,8 @@ extern "C"
     liblora_rf95_modem_status_t liblora_rf95_modem_status(liblora_rf95_radio_t *radio);
 
     // interrupts
-    int liblora_rf95_handle_interrupt(liblora_rf95_radio_t *radio);
+    void liblora_rf95_onrx(liblora_rf95_radio_t *radio, void (*callback)(liblora_rf95_packet_t));
+    void liblora_rf95_ontx(liblora_rf95_radio_t *radio, void (*callback)(void));
 
 #ifdef __cplusplus
 }

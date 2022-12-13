@@ -16,6 +16,8 @@ liblora_rf95_radio_t* liblora_rf95_radio(liblora_driver_t* driver, int dio0, int
     radio->driver = driver;
     radio->dio0 = dio0;
     radio->rst = rst;
+    radio->onrx = NULL;
+    radio->ontx = NULL;
 
     return radio;
 }
@@ -535,15 +537,35 @@ liblora_rf95_modem_status_t liblora_rf95_modem_status(liblora_rf95_radio_t *radi
 }
 
 // interrupts
-int liblora_rf95_handle_interrupt(liblora_rf95_radio_t *radio)
+static liblora_rf95_radio_t* radios[64] = {NULL, };
+static void liblora_rf95_handle_interrupt(int pin)
 {
+    liblora_rf95_radio_t* radio = radios[pin];
+    if (radio == NULL)
+        return;
+
     uint8_t irq_flags = liblora_driver_spi_read(radio->driver, LIBLORA_RF95_REG_IRQ_FLAGS);
     if ((irq_flags & LIBLORA_RF95_IRQ_RX_DONE) > 0)       // RX_DONE
     {
-        return 1;
+        liblora_rf95_packet_t pkt = liblora_rf95_packet_read(radio);
+        if (radio->onrx != NULL) radio->onrx(pkt);
     }
     else if ((irq_flags & LIBLORA_RF95_IRQ_TX_DONE) > 0)  // TX_DONE
     {
-        return 2;
+        if (radio->ontx != NULL) radio->ontx();
     }
+}
+
+void liblora_rf95_onrx(liblora_rf95_radio_t *radio, void (*callback)(liblora_rf95_packet_t))
+{
+    radios[radio->dio0] = radio;
+    radio->onrx = callback;
+    liblora_driver_attach_interrupt(radio->driver, radio->dio0, INT_EDGE_RISING, liblora_rf95_handle_interrupt);
+}
+
+void liblora_rf95_ontx(liblora_rf95_radio_t *radio, void (*callback)(void))
+{
+    radios[radio->dio0] = radio;
+    radio->onrx = callback;
+    liblora_driver_attach_interrupt(radio->driver, radio->dio0, INT_EDGE_RISING, liblora_rf95_handle_interrupt);
 }
