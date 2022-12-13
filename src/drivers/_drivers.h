@@ -26,4 +26,6 @@
 #define liblora_driver_spi_write(driver, reg, val) driver->spi_write(reg, val, driver->config)
 #define liblora_driver_spi_write_burst(driver, reg, buffer, len) driver->spi_write_burst(reg, buffer, len, driver->config)
 
+#define liblora_driver_attach_interrupt(driver, pin, edge_type, callback) driver->attach_interrupt(pin, edge_type, callback)
+
 #endif
