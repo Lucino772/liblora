@@ -134,40 +134,40 @@ extern "C"
     } liblora_rf95_opmode_t;
 
     // Opmode (private)
-    liblora_rf95_opmode_t liblora_rf95_opmode_read(liblora_rf95_radio_t radio);
-    void liblora_rf95_opmode_write(liblora_rf95_radio_t radio, liblora_rf95_opmode_t _opmode);
+    liblora_rf95_opmode_t liblora_rf95_opmode_read(liblora_rf95_radio_t *radio);
+    void liblora_rf95_opmode_write(liblora_rf95_radio_t *radio, liblora_rf95_opmode_t _opmode);
 
     // config/optimization (private)
-    void liblora_rf95_config_low_data_rate_optimization(liblora_rf95_radio_t radio, bool enable);
-    void liblora_rf95_config_detection_optimization(liblora_rf95_radio_t radio, uint8_t value);
-    void liblora_rf95_config_detection_threshold(liblora_rf95_radio_t radio, uint8_t value);
-    void liblora_rf95_config_high_bw_optimization(liblora_rf95_radio_t radio, bool enable);
+    void liblora_rf95_config_low_data_rate_optimization(liblora_rf95_radio_t *radio, bool enable);
+    void liblora_rf95_config_detection_optimization(liblora_rf95_radio_t *radio, uint8_t value);
+    void liblora_rf95_config_detection_threshold(liblora_rf95_radio_t *radio, uint8_t value);
+    void liblora_rf95_config_high_bw_optimization(liblora_rf95_radio_t *radio, bool enable);
 
     // config (private)
-    void liblora_rf95_config_crc(liblora_rf95_radio_t radio, bool enable);
-    void liblora_rf95_config_header_mode(liblora_rf95_radio_t radio, bool _explicit);
-    void liblora_rf95_config_symb_timeout(liblora_rf95_radio_t radio, uint16_t timeout);
-    void liblora_rf95_config_preamble_len(liblora_rf95_radio_t radio, uint16_t len);
-    void liblora_rf95_config_max_payload_len(liblora_rf95_radio_t radio, uint8_t len);
-    void liblora_rf95_config_hop_period(liblora_rf95_radio_t radio, uint8_t value);
+    void liblora_rf95_config_crc(liblora_rf95_radio_t *radio, bool enable);
+    void liblora_rf95_config_header_mode(liblora_rf95_radio_t *radio, bool _explicit);
+    void liblora_rf95_config_symb_timeout(liblora_rf95_radio_t *radio, uint16_t timeout);
+    void liblora_rf95_config_preamble_len(liblora_rf95_radio_t *radio, uint16_t len);
+    void liblora_rf95_config_max_payload_len(liblora_rf95_radio_t *radio, uint8_t len);
+    void liblora_rf95_config_hop_period(liblora_rf95_radio_t *radio, uint8_t value);
 
-    void liblora_rf95_config_pa(liblora_rf95_radio_t radio, bool boost, uint8_t power, uint8_t max_power);
-    void liblora_rf95_config_agc(liblora_rf95_radio_t radio, bool enable);
-    void liblora_rf95_config_pa_ramp(liblora_rf95_radio_t radio, uint8_t ramp);
+    void liblora_rf95_config_pa(liblora_rf95_radio_t *radio, bool boost, uint8_t power, uint8_t max_power);
+    void liblora_rf95_config_agc(liblora_rf95_radio_t *radio, bool enable);
+    void liblora_rf95_config_pa_ramp(liblora_rf95_radio_t *radio, uint8_t ramp);
 
-    void liblora_rf95_config_ocp(liblora_rf95_radio_t radio, bool enable, uint8_t trim);
+    void liblora_rf95_config_ocp(liblora_rf95_radio_t *radio, bool enable, uint8_t trim);
 
-    void liblora_rf95_config_lna(liblora_rf95_radio_t radio, bool boost, uint8_t gain);
+    void liblora_rf95_config_lna(liblora_rf95_radio_t *radio, bool boost, uint8_t gain);
 
     // fifo (private)
-    void liblora_rf95_fifo_write(liblora_rf95_radio_t radio, uint8_t *buffer, uint8_t len);
-    void liblora_rf95_fifo_read(liblora_rf95_radio_t radio, uint8_t *buffer, uint8_t len);
+    void liblora_rf95_fifo_write(liblora_rf95_radio_t *radio, uint8_t *buffer, uint8_t len);
+    void liblora_rf95_fifo_read(liblora_rf95_radio_t *radio, uint8_t *buffer, uint8_t len);
 
     // packet (private)
-    uint8_t liblora_rf95_packet_size(liblora_rf95_radio_t radio);
-    uint8_t liblora_rf95_packet_rssi(liblora_rf95_radio_t radio);
-    int8_t liblora_rf95_packet_snr(liblora_rf95_radio_t radio);
-    uint8_t liblora_rf95_packet_strength(liblora_rf95_radio_t radio);
+    uint8_t liblora_rf95_packet_size(liblora_rf95_radio_t *radio);
+    uint8_t liblora_rf95_packet_rssi(liblora_rf95_radio_t *radio);
+    int8_t liblora_rf95_packet_snr(liblora_rf95_radio_t *radio);
+    uint8_t liblora_rf95_packet_strength(liblora_rf95_radio_t *radio);
 
 #ifdef __cplusplus
 }

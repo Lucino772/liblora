@@ -89,34 +89,38 @@ extern "C"
 
 
     // Init (public)
-    liblora_rf95_radio_t liblora_rf95_radio(liblora_driver_t* driver, int dio0, int rst);
-    int liblora_rf95_init(liblora_rf95_radio_t radio, long freq, uint8_t sf, uint8_t bw);
+    liblora_rf95_radio_t *liblora_rf95_radio(liblora_driver_t* driver, int dio0, int rst);
+    int liblora_rf95_init(liblora_rf95_radio_t *radio, long freq, uint8_t sf, uint8_t bw);
+    void liblora_rf95_delete(liblora_rf95_radio_t *radio);
 
     // opmode (public)
-    void liblora_rf95_sleep(liblora_rf95_radio_t radio);
-    void liblora_rf95_idle(liblora_rf95_radio_t radio);
-    bool liblora_rf95_recv(liblora_rf95_radio_t radio, bool continuous);
-    void liblora_rf95_send(liblora_rf95_radio_t radio, bool async);
+    void liblora_rf95_sleep(liblora_rf95_radio_t *radio);
+    void liblora_rf95_idle(liblora_rf95_radio_t *radio);
+    bool liblora_rf95_recv(liblora_rf95_radio_t *radio, bool continuous);
+    void liblora_rf95_send(liblora_rf95_radio_t *radio, bool async);
 
     // config (public)
-    void liblora_rf95_config_frequency(liblora_rf95_radio_t radio, long freq);
-    void liblora_rf95_config_bandwidth(liblora_rf95_radio_t radio, uint8_t bw, bool optimize);
-    void liblora_rf95_config_spreading_factor(liblora_rf95_radio_t radio, uint8_t sf, bool optimize);
-    void liblora_rf95_config_coding_rate(liblora_rf95_radio_t radio, uint8_t cr);
-    void liblora_rf95_config_invert_iq(liblora_rf95_radio_t radio, bool enable, bool rx);
-    void liblora_rf95_config_sync_word(liblora_rf95_radio_t radio, uint8_t value);
+    void liblora_rf95_config_frequency(liblora_rf95_radio_t *radio, long freq);
+    void liblora_rf95_config_bandwidth(liblora_rf95_radio_t *radio, uint8_t bw, bool optimize);
+    void liblora_rf95_config_spreading_factor(liblora_rf95_radio_t *radio, uint8_t sf, bool optimize);
+    void liblora_rf95_config_coding_rate(liblora_rf95_radio_t *radio, uint8_t cr);
+    void liblora_rf95_config_invert_iq(liblora_rf95_radio_t *radio, bool enable, bool rx);
+    void liblora_rf95_config_sync_word(liblora_rf95_radio_t *radio, uint8_t value);
 
     // packet (public)
-    liblora_rf95_packet_t liblora_rf95_packet_read(liblora_rf95_radio_t radio);
-    void liblora_rf95_packet_write(liblora_rf95_radio_t radio, uint8_t *buffer, uint8_t len);
+    liblora_rf95_packet_t liblora_rf95_packet_read(liblora_rf95_radio_t *radio);
+    void liblora_rf95_packet_write(liblora_rf95_radio_t *radio, uint8_t *buffer, uint8_t len);
 
     // other (public)
-    uint16_t liblora_rf95_valid_header_count(liblora_rf95_radio_t radio);
-    uint16_t liblora_rf95_valid_packet_count(liblora_rf95_radio_t radio);
-    int64_t liblora_rf95_frequency_error(liblora_rf95_radio_t radio);
-    uint8_t liblora_rf95_rssi(liblora_rf95_radio_t radio);
-    uint8_t liblora_rf95_random(liblora_rf95_radio_t radio);
-    liblora_rf95_modem_status_t liblora_rf95_modem_status(liblora_rf95_radio_t radio);
+    uint16_t liblora_rf95_valid_header_count(liblora_rf95_radio_t *radio);
+    uint16_t liblora_rf95_valid_packet_count(liblora_rf95_radio_t *radio);
+    int64_t liblora_rf95_frequency_error(liblora_rf95_radio_t *radio);
+    uint8_t liblora_rf95_rssi(liblora_rf95_radio_t *radio);
+    uint8_t liblora_rf95_random(liblora_rf95_radio_t *radio);
+    liblora_rf95_modem_status_t liblora_rf95_modem_status(liblora_rf95_radio_t *radio);
+
+    // interrupts
+    int liblora_rf95_handle_interrupt(liblora_rf95_radio_t radio);
 
 #ifdef __cplusplus
 }
