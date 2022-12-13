@@ -8,7 +8,7 @@
 #include "_rf95.h"
 
 // Initialisation
-liblora_rf95_radio_t liblora_rf95_radio(liblora_driver_t* driver, int dio0, int rst)
+liblora_rf95_radio_t* liblora_rf95_radio(liblora_driver_t* driver, int dio0, int rst)
 {
     liblora_driver_setup(driver);
 

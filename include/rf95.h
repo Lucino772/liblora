@@ -120,7 +120,7 @@ extern "C"
     liblora_rf95_modem_status_t liblora_rf95_modem_status(liblora_rf95_radio_t *radio);
 
     // interrupts
-    int liblora_rf95_handle_interrupt(liblora_rf95_radio_t radio);
+    int liblora_rf95_handle_interrupt(liblora_rf95_radio_t *radio);
 
 #ifdef __cplusplus
 }
