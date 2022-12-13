@@ -566,6 +566,6 @@ void liblora_rf95_onrx(liblora_rf95_radio_t *radio, void (*callback)(liblora_rf9
 void liblora_rf95_ontx(liblora_rf95_radio_t *radio, void (*callback)(void))
 {
     radios[radio->dio0] = radio;
-    radio->onrx = callback;
+    radio->ontx = callback;
     liblora_driver_attach_interrupt(radio->driver, radio->dio0, INT_EDGE_RISING, liblora_rf95_handle_interrupt);
 }
