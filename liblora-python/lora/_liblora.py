@@ -172,12 +172,14 @@ liblora_rf95_modem_status.argtypes = [liblora_rf95_radio_t_p]
 liblora_rf95_modem_status = liblora_rf95_modem_status_t
 
 ## interrupts
+LIBLORA_RF95_RX_CALLBACK = ctypes.CFUNCTYPE(None, liblora_rf95_packet_t)
 liblora_rf95_onrx = liblora.liblora_rf95_onrx
-liblora_rf95_onrx.argtypes = [liblora_rf95_radio_t_p, ctypes.CFUNCTYPE(None, liblora_rf95_packet_t)]
+liblora_rf95_onrx.argtypes = [liblora_rf95_radio_t_p, LIBLORA_RF95_RX_CALLBACK]
 liblora_rf95_onrx.restype = None
 
+LIBLORA_RF95_TX_CALLBACK = ctypes.CFUNCTYPE(None)
 liblora_rf95_ontx = liblora.liblora_rf95_ontx
-liblora_rf95_ontx.argtypes = [liblora_rf95_radio_t_p, ctypes.CFUNCTYPE(None)]
+liblora_rf95_ontx.argtypes = [liblora_rf95_radio_t_p, LIBLORA_RF95_TX_CALLBACK]
 liblora_rf95_ontx.restype = None
 
 # Functions (drivers)
