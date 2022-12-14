@@ -2,7 +2,7 @@ from lora import _liblora
 
 def on_receive(pkt):
     if pkt.size > 0:
-        print("Packet received ({} bytes): {}".format(pkt.size, pkt.buffer))
+        print("Packet received ({} bytes): {}".format(pkt.size, bytearray(pkt.buffer)))
     else:
         print("Something went wrong !")
 
