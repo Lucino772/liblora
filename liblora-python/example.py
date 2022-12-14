@@ -5,7 +5,8 @@ radio = RF95(0, 6, 7, 6)
 
 def on_receive(pkt):
     if pkt.size > 0:
-        print("Packet received ({} bytes): {}".format(pkt.size, bytearray(pkt.buffer)))
+        data = bytes(pkt.buffer[:pkt.size]).decode('utf-8')
+        print("Packet received ({} bytes): {}".format(pkt.size, data))
     else:
         print("Something went wrong !")
 
