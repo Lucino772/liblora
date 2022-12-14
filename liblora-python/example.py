@@ -17,7 +17,8 @@ def main():
         print('Failed to create radio')
         return 1
 
-    if _liblora.liblora_rf95_init(radio, 8681E5, 0x07, 0x07) != 0:
+    freq = 868100000 # 8681E5
+    if _liblora.liblora_rf95_init(radio, freq, 0x07, 0x07) != 0:
         print('Failed to initialize radio')
         return 1
 
