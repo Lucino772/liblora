@@ -109,6 +109,7 @@ static void _wiringpi_spi_write_burst(uint8_t reg, uint8_t *buf, int len, void* 
 void (*wiringpi_isr_callbacks[64])(int) = {NULL, };
 void _wiringpi_isr_callback(int pin)
 {
+    printf("_wiringpi_isr_callback: callback on pin %i\n", pin);
     if (wiringpi_isr_callbacks[pin] != NULL)
         wiringpi_isr_callbacks[pin](pin);
 }

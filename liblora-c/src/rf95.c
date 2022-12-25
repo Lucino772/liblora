@@ -544,11 +544,14 @@ static void liblora_rf95_handle_interrupt(int pin)
     if (radio == NULL)
         return;
 
+    printf("liblora_rf95_handle_interrupt: interrupt received !\n");
     uint8_t irq_flags = liblora_driver_spi_read(radio->driver, LIBLORA_RF95_REG_IRQ_FLAGS);
     if ((irq_flags & LIBLORA_RF95_IRQ_RX_DONE) > 0)       // RX_DONE
     {
         liblora_rf95_packet_t pkt = liblora_rf95_packet_read(radio);
+        printf("liblora_rf95_handle_interrupt: read packet !\n");
         if (radio->onrx != NULL) radio->onrx(pkt);
+        printf("liblora_rf95_handle_interrupt: callback called !\n");
     }
     else if ((irq_flags & LIBLORA_RF95_IRQ_TX_DONE) > 0)  // TX_DONE
     {

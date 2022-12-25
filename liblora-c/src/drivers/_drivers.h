@@ -7,6 +7,7 @@
 #ifndef _LIBLORA_PRIVATE_DRIVERS_H_
 #define _LIBLORA_PRIVATE_DRIVERS_H_
 
+#include <stdlib.h>
 #include "../include/liblora/drivers.h"
 
 #define INPUT       0
