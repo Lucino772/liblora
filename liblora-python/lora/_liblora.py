@@ -18,7 +18,7 @@ BUFFER = ctypes.POINTER(ctypes.c_uint8)
 # Structures & Enums
 class liblora_rf95_packet_t(ctypes.Structure):
     _fields_ = [
-        ('buffer', ctypes.c_uint8 * 256),
+        ('buffer', ctypes.c_ubyte * 256),
         ('size', ctypes.c_uint8),
         ('pkt_snr', ctypes.c_int8),
         ('pkt_rssi', ctypes.c_uint8),
