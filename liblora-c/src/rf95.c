@@ -550,6 +550,7 @@ static void liblora_rf95_handle_interrupt(int pin)
     {
         liblora_rf95_packet_t pkt = liblora_rf95_packet_read(radio);
         printf("liblora_rf95_handle_interrupt: read packet !\n");
+        printf("liblora_rf95_handle_interrupt: packet b: %s, s: %i\n", pkt.buffer, pkt.size);
         if (radio->onrx != NULL) radio->onrx(pkt);
         printf("liblora_rf95_handle_interrupt: callback called !\n");
     }
