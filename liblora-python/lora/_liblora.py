@@ -64,8 +64,8 @@ class liblora_rf95_radio_t(ctypes.Structure):
         ('rst', ctypes.c_int),
 
         # Callbacks
-        ('onrx', ctypes.CFUNCTYPE(None, liblora_rf95_packet_t)),
-        ('ontx', ctypes.CFUNCTYPE(None))
+        # ('onrx', ctypes.CFUNCTYPE(None, liblora_rf95_packet_t)),
+        # ('ontx', ctypes.CFUNCTYPE(None))
     ]
 
 liblora_rf95_radio_t_p = ctypes.POINTER(liblora_rf95_radio_t)
