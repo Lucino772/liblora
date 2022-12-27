@@ -31,7 +31,7 @@ void on_receive(liblora_rf95_packet_t pkt)
 int main()
 {
     signal(SIGINT, sig_term_handler);
-    radio.driver_config = driver_config;
+    radio.driver_config = &driver_config;
 
     if (liblora_rf95_init(&radio, 8681E5, LIBLORA_RF95_SF_7, LIBLORA_RF95_BW_125) != 0)
     {
