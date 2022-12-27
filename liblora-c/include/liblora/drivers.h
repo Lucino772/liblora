@@ -14,7 +14,7 @@ extern "C"
 {
 #endif
 
-    #define LIBLORA_WIRINGPI_INIT { 0, 6, 500000 };
+    #define LIBLORA_DRIVER_WIRINGPI_INIT { 0, 6, 500000 };
 
     typedef struct
     {

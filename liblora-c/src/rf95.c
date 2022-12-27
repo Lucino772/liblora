@@ -8,22 +8,9 @@
 #include "_rf95.h"
 
 // Initialisation
-liblora_rf95_radio_t* liblora_rf95_radio(int dio0, int rst, void* driver_config)
-{
-    liblora_driver_setup(driver_config);
-
-    liblora_rf95_radio_t* radio = (liblora_rf95_radio_t*)malloc(sizeof(liblora_rf95_radio_t));
-    radio->dio0 = dio0;
-    radio->rst = rst;
-    radio->driver_config = driver_config;
-    radio->onrx = NULL;
-    radio->ontx = NULL;
-
-    return radio;
-}
-
 int liblora_rf95_init(liblora_rf95_radio_t *radio, long freq, uint8_t sf, uint8_t bw)
 {
+    liblora_driver_setup(radio->driver_config);
     liblora_driver_pin_mode(radio->dio0, INPUT, radio->driver_config);
     liblora_driver_pin_mode(radio->rst, OUTPUT, radio->driver_config);
 

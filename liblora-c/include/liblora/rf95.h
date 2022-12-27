@@ -93,7 +93,6 @@ extern "C"
     } liblora_rf95_modem_status_t;
 
     // Init (public)
-    liblora_rf95_radio_t *liblora_rf95_radio(int dio0, int rst, void* driver);
     int liblora_rf95_init(liblora_rf95_radio_t *radio, long freq, uint8_t sf, uint8_t bw);
 
     // opmode (public)
