@@ -10,56 +10,57 @@
 /**============================================
  *               CONFIG
  *=============================================**/
-#define LIBLORA_RF95_BW_7_8                   0x00
-#define LIBLORA_RF95_BW_10_4                  0x01
-#define LIBLORA_RF95_BW_15_6                  0x02
-#define LIBLORA_RF95_BW_20_8                  0x03
-#define LIBLORA_RF95_BW_31_25                 0x04
-#define LIBLORA_RF95_BW_41_7                  0x05
-#define LIBLORA_RF95_BW_62_5                  0x06
-#define LIBLORA_RF95_BW_125                   0x07
-#define LIBLORA_RF95_BW_250                   0x08
-#define LIBLORA_RF95_BW_500                   0x09
+#define LIBLORA_RF95_BW_7_8 0x00
+#define LIBLORA_RF95_BW_10_4 0x01
+#define LIBLORA_RF95_BW_15_6 0x02
+#define LIBLORA_RF95_BW_20_8 0x03
+#define LIBLORA_RF95_BW_31_25 0x04
+#define LIBLORA_RF95_BW_41_7 0x05
+#define LIBLORA_RF95_BW_62_5 0x06
+#define LIBLORA_RF95_BW_125 0x07
+#define LIBLORA_RF95_BW_250 0x08
+#define LIBLORA_RF95_BW_500 0x09
 
-#define LIBLORA_RF95_SF_6                     0x06
-#define LIBLORA_RF95_SF_7                     0x07
-#define LIBLORA_RF95_SF_8                     0x08
-#define LIBLORA_RF95_SF_9                     0x09
-#define LIBLORA_RF95_SF_10                    0x10
-#define LIBLORA_RF95_SF_11                    0x11
-#define LIBLORA_RF95_SF_12                    0x12
+#define LIBLORA_RF95_SF_6 0x06
+#define LIBLORA_RF95_SF_7 0x07
+#define LIBLORA_RF95_SF_8 0x08
+#define LIBLORA_RF95_SF_9 0x09
+#define LIBLORA_RF95_SF_10 0x10
+#define LIBLORA_RF95_SF_11 0x11
+#define LIBLORA_RF95_SF_12 0x12
 
-#define LIBLORA_RF95_CR_45                    0x01
-#define LIBLORA_RF95_CR_46                    0x02
-#define LIBLORA_RF95_CR_47                    0x03
-#define LIBLORA_RF95_CR_48                    0x04
+#define LIBLORA_RF95_CR_45 0x01
+#define LIBLORA_RF95_CR_46 0x02
+#define LIBLORA_RF95_CR_47 0x03
+#define LIBLORA_RF95_CR_48 0x04
 
-#define LIBLORA_RF95_PA_RAMP_3_4MS            0x00
-#define LIBLORA_RF95_PA_RAMP_2MS              0x01
-#define LIBLORA_RF95_PA_RAMP_1MS              0x02
-#define LIBLORA_RF95_PA_RAMP_500US            0x03
-#define LIBLORA_RF95_PA_RAMP_250US            0x04
-#define LIBLORA_RF95_PA_RAMP_125US            0x05
-#define LIBLORA_RF95_PA_RAMP_100US            0x06
-#define LIBLORA_RF95_PA_RAMP_62US             0x07
-#define LIBLORA_RF95_PA_RAMP_50US             0x08
-#define LIBLORA_RF95_PA_RAMP_40US             0x09
-#define LIBLORA_RF95_PA_RAMP_31US             0x0A
-#define LIBLORA_RF95_PA_RAMP_25US             0x0B
-#define LIBLORA_RF95_PA_RAMP_20US             0x0C
-#define LIBLORA_RF95_PA_RAMP_15US             0x0D
-#define LIBLORA_RF95_PA_RAMP_12US             0x0E
-#define LIBLORA_RF95_PA_RAMP_10US             0x0F
+#define LIBLORA_RF95_PA_RAMP_3_4MS 0x00
+#define LIBLORA_RF95_PA_RAMP_2MS 0x01
+#define LIBLORA_RF95_PA_RAMP_1MS 0x02
+#define LIBLORA_RF95_PA_RAMP_500US 0x03
+#define LIBLORA_RF95_PA_RAMP_250US 0x04
+#define LIBLORA_RF95_PA_RAMP_125US 0x05
+#define LIBLORA_RF95_PA_RAMP_100US 0x06
+#define LIBLORA_RF95_PA_RAMP_62US 0x07
+#define LIBLORA_RF95_PA_RAMP_50US 0x08
+#define LIBLORA_RF95_PA_RAMP_40US 0x09
+#define LIBLORA_RF95_PA_RAMP_31US 0x0A
+#define LIBLORA_RF95_PA_RAMP_25US 0x0B
+#define LIBLORA_RF95_PA_RAMP_20US 0x0C
+#define LIBLORA_RF95_PA_RAMP_15US 0x0D
+#define LIBLORA_RF95_PA_RAMP_12US 0x0E
+#define LIBLORA_RF95_PA_RAMP_10US 0x0F
 
+#include <stdbool.h>
+#include <stdint.h>
+#include "drivers.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-    #include <stdbool.h>
-    #include <stdint.h>
-    #include "drivers.h"
+    #define LIBLORA_RF95_RADIO_INIT { 7, 0, NULL, NULL, NULL };
 
     typedef struct
     {
@@ -71,10 +72,11 @@ extern "C"
         uint8_t strength;
     } liblora_rf95_packet_t;
 
-    typedef struct {
-        liblora_driver_t* driver;
+    typedef struct
+    {
         int dio0;
         int rst;
+        void* driver_config;
 
         void (*onrx)(liblora_rf95_packet_t);
         void (*ontx)(void);
@@ -82,7 +84,7 @@ extern "C"
 
     typedef enum
     {
-        UNKNOWN =     0x0,
+        UNKNOWN = 0x0,
         SIGNAL_DETECTED = 0x1,
         SIGNAL_SYNCED = 0x2,
         RX_ON_GOING = 0x4,
@@ -90,11 +92,9 @@ extern "C"
         MODEM_CLEAR = 0x10,
     } liblora_rf95_modem_status_t;
 
-
     // Init (public)
-    liblora_rf95_radio_t *liblora_rf95_radio(liblora_driver_t* driver, int dio0, int rst);
+    liblora_rf95_radio_t *liblora_rf95_radio(int dio0, int rst, void* driver);
     int liblora_rf95_init(liblora_rf95_radio_t *radio, long freq, uint8_t sf, uint8_t bw);
-    void liblora_rf95_delete(liblora_rf95_radio_t *radio);
 
     // opmode (public)
     void liblora_rf95_sleep(liblora_rf95_radio_t *radio);

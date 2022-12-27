@@ -8,7 +8,7 @@
 #define _LIBLORA_PRIVATE_RF95_H_
 
 #include <stdio.h>
-#include "drivers/_drivers.h"
+#include "drivers/driver.h"
 #include "../include/liblora/rf95.h"
 
 /**============================================
