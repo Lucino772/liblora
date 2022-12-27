@@ -45,7 +45,8 @@ extern "C"
     void liblora_driver_spi_write_burst(uint8_t reg, uint8_t *buf, int len, void *config);
 
     // Interrupts
-    void liblora_driver_attach_interrupt(int pin, int edge_type, void (*callback)(int), void *config);
+    void liblora_driver_attach_interrupt(int pin, int edge_type, void (*callback)(int, void*), void *config);
+    void liblora_driver_attach_interrupt_ex(int pin, int edge_type, void (*callback)(int, void*), void* userdata, void *config);
 
 #ifdef __cplusplus
 }

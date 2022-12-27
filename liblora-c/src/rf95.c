@@ -134,7 +134,8 @@ void liblora_rf95_send(liblora_rf95_radio_t *radio, bool async)
 
     // wait for TxDone
     if (!async)
-        while ((liblora_driver_spi_read(LIBLORA_RF95_REG_IRQ_FLAGS, radio->driver_config) & LIBLORA_RF95_IRQ_TX_DONE) == 0);
+        while ((liblora_driver_spi_read(LIBLORA_RF95_REG_IRQ_FLAGS, radio->driver_config) & LIBLORA_RF95_IRQ_TX_DONE) == 0)
+            ;
 
     // FIXME: Remove code below
     // reset DIO mapping & IRQ mask
@@ -512,39 +513,48 @@ liblora_rf95_modem_status_t liblora_rf95_modem_status(liblora_rf95_radio_t *radi
 }
 
 // interrupts
-static liblora_rf95_radio_t* radios[64] = {NULL, };
-static void liblora_rf95_handle_interrupt(int pin)
+static void liblora_rf95_handle_interrupt(int pin, void *userdata)
 {
-    liblora_rf95_radio_t* radio = radios[pin];
+    liblora_rf95_radio_t *radio = (liblora_rf95_radio_t *)userdata;
     if (radio == NULL)
         return;
 
     printf("liblora_rf95_handle_interrupt: interrupt received !\n");
     uint8_t irq_flags = liblora_driver_spi_read(LIBLORA_RF95_REG_IRQ_FLAGS, radio->driver_config);
-    if ((irq_flags & LIBLORA_RF95_IRQ_RX_DONE) > 0)       // RX_DONE
+    if ((irq_flags & LIBLORA_RF95_IRQ_RX_DONE) > 0) // RX_DONE
     {
         liblora_rf95_packet_t pkt = liblora_rf95_packet_read(radio);
         printf("liblora_rf95_handle_interrupt: read packet !\n");
         printf("liblora_rf95_handle_interrupt: packet b: %s, s: %i\n", pkt.buffer, pkt.size);
-        if (radio->onrx != NULL) radio->onrx(pkt);
+        if (radio->onrx != NULL)
+            radio->onrx(pkt);
         printf("liblora_rf95_handle_interrupt: callback called !\n");
     }
-    else if ((irq_flags & LIBLORA_RF95_IRQ_TX_DONE) > 0)  // TX_DONE
+    else if ((irq_flags & LIBLORA_RF95_IRQ_TX_DONE) > 0) // TX_DONE
     {
-        if (radio->ontx != NULL) radio->ontx();
+        if (radio->ontx != NULL)
+            radio->ontx();
     }
 }
 
 void liblora_rf95_onrx(liblora_rf95_radio_t *radio, void (*callback)(liblora_rf95_packet_t))
 {
-    radios[radio->dio0] = radio;
     radio->onrx = callback;
-    liblora_driver_attach_interrupt(radio->dio0, INT_EDGE_RISING, liblora_rf95_handle_interrupt, radio->driver_config);
+    liblora_driver_attach_interrupt_ex(
+        radio->dio0,
+        INT_EDGE_RISING,
+        liblora_rf95_handle_interrupt,
+        &radio,
+        radio->driver_config);
 }
 
 void liblora_rf95_ontx(liblora_rf95_radio_t *radio, void (*callback)(void))
 {
-    radios[radio->dio0] = radio;
     radio->ontx = callback;
-    liblora_driver_attach_interrupt(radio->dio0, INT_EDGE_RISING, liblora_rf95_handle_interrupt, radio->driver_config);
+    liblora_driver_attach_interrupt_ex(
+        radio->dio0,
+        INT_EDGE_RISING,
+        liblora_rf95_handle_interrupt,
+        &radio,
+        radio->driver_config);
 }

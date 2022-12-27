@@ -12,9 +12,23 @@
 #include <wiringPiSPI.h>
 
 
+typedef struct {
+    void (*callback)(int, void*);
+    void* userdata;
+} wiringpi_isr_callback_t;
+
+static wiringpi_isr_callback_t wiringpi_isr_callbacks[64];
+
 // Setup
 int liblora_driver_setup(void* config)
 {
+    // ensure values are NULL
+    for (int i = 0; i < 64; i++)
+    {
+        wiringpi_isr_callbacks[i].callback = NULL;
+        wiringpi_isr_callbacks[i].userdata = NULL;
+    }
+    
     return wiringPiSetup();
 }
 
@@ -47,9 +61,9 @@ void liblora_driver_delay(int ms, void* config)
 static int _wiringpi_spi_rw(uint8_t *buffer, int len, void* config)
 {
     liblora_wiringpi_config_t* ops = (liblora_wiringpi_config_t*)config;
-    _wiringpi_pin_write(ops->spi_ss, LOW, config);
+    liblora_driver_pin_write(ops->spi_ss, LOW, config);
     int nread = wiringPiSPIDataRW(ops->spi_dev, buffer, len);
-    _wiringpi_pin_write(ops->spi_ss, HIGH, config);
+    liblora_driver_pin_write(ops->spi_ss, HIGH, config);
 
     return nread;
 }
@@ -57,7 +71,7 @@ static int _wiringpi_spi_rw(uint8_t *buffer, int len, void* config)
 int liblora_driver_spi_init(void* config)
 {
     liblora_wiringpi_config_t* ops = (liblora_wiringpi_config_t*)config;
-    _wiringpi_pin_mode(ops->spi_ss, OUTPUT, config);
+    liblora_driver_pin_mode(ops->spi_ss, OUTPUT, config);
     return wiringPiSPISetup(ops->spi_dev, ops->spi_clck_speed);
 }
 
@@ -102,12 +116,12 @@ void liblora_driver_spi_write_burst(uint8_t reg, uint8_t *buf, int len, void* co
 }
 
 // Interrupt
-void (*wiringpi_isr_callbacks[64])(int) = {NULL, };
 void _wiringpi_isr_callback(int pin)
 {
     printf("_wiringpi_isr_callback: callback on pin %i\n", pin);
-    if (wiringpi_isr_callbacks[pin] != NULL)
-        wiringpi_isr_callbacks[pin](pin);
+    void* userdata = wiringpi_isr_callbacks[pin].userdata;
+    if (wiringpi_isr_callbacks[pin].callback != NULL)
+        wiringpi_isr_callbacks[pin].callback(pin, userdata);
 }
 
 void _wiringpi_isr_callback_pin0(void) { _wiringpi_isr_callback(0); }
@@ -175,9 +189,11 @@ void _wiringpi_isr_callback_pin61(void) { _wiringpi_isr_callback(61); }
 void _wiringpi_isr_callback_pin62(void) { _wiringpi_isr_callback(62); }
 void _wiringpi_isr_callback_pin63(void) { _wiringpi_isr_callback(63); }
 
-void liblora_driver_attach_interrupt(int pin, int edge_type, void(*callback)(int), void* config)
+
+void liblora_driver_attach_interrupt_ex(int pin, int edge_type, void (*callback)(int, void*), void* userdata, void *config)
 {
-    wiringpi_isr_callbacks[pin] = callback;
+    wiringpi_isr_callbacks[pin].callback = callback;
+    wiringpi_isr_callbacks[pin].userdata = userdata;
 
     void (*func)(void);
     switch(pin) {
@@ -248,5 +264,10 @@ void liblora_driver_attach_interrupt(int pin, int edge_type, void(*callback)(int
     }
 
     wiringPiISR(pin, edge_type, func);
+}
+
+void liblora_driver_attach_interrupt(int pin, int edge_type, void(*callback)(int, void*), void* config)
+{
+    liblora_driver_attach_interrupt_ex(pint, edge_type, callback, NULL, config);
 }
 

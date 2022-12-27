@@ -171,8 +171,7 @@ extern "C"
     uint8_t liblora_rf95_packet_strength(liblora_rf95_radio_t *radio);
 
     // interrups
-    static liblora_rf95_radio_t* radios[64];
-    static void liblora_rf95_handle_interrupt(int pin);
+    static void liblora_rf95_handle_interrupt(int pin, void* userdata);
 
 #ifdef __cplusplus
 }

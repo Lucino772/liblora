@@ -27,7 +27,6 @@ void on_receive(liblora_rf95_packet_t pkt)
     }
 }
 
-
 int main()
 {
     signal(SIGINT, sig_term_handler);
