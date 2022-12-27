@@ -8,8 +8,7 @@ set(INCLUDE_DIR ./include/liblora)
 
 # Source Files
 set(lora_src
-    ./src/rf95.c ./src/utils.c
-    ./src/drivers/drivers.c
+    ./src/rf95.c
     ./src/drivers/wiringpi.c
 )
 
