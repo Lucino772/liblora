@@ -7,39 +7,22 @@
 #ifndef _LIBLORA_PUBLIC_DRIVERS_H_
 #define _LIBLORA_PUBLIC_DRIVERS_H_
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include <stdint.h>
+    #define LIBLORA_WIRINGPI_INIT { 0, 6, 500000 };
 
     typedef struct
     {
-        void *config;
+        int spi_dev;
+        int spi_ss;
+        int spi_clck_speed;
+    } liblora_wiringpi_config_t;
 
-        // GPIO
-        int (*setup)(void *);
-        void (*pin_mode)(int, int, void *);
-        void (*pin_write)(int, int, void *);
-        uint8_t (*pin_read)(int, void *);
-        void (*delay)(int, void *);
-
-        // SPI
-        int (*spi_init)(void *);
-        uint8_t (*spi_read)(uint8_t, void *);
-        uint8_t (*spi_read_burst)(uint8_t, uint8_t *, int, void *);
-        void (*spi_write)(uint8_t, uint8_t, void *);
-        void (*spi_write_burst)(uint8_t, uint8_t *, int, void *);
-
-        // Interrupts
-        void (*attach_interrupt)(int, int, void (*)(int), void*);
-    } liblora_driver_t;
-
-    liblora_driver_t *liblora_driver_wiringpi(int spi_dev, int spi_ss);
-    // liblora_driver_t* liblora_driver_bcm2835(int spi_ss);
-
-    void liblora_driver_delete(liblora_driver_t *driver); // TODO
 #ifdef __cplusplus
 }
 #endif
