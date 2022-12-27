@@ -6,7 +6,7 @@ if (NOT DEFINED ENV{TOOLCHAIN_PATH})
 endif()
 
 set(TOOLCHAIN_PATH $ENV{TOOLCHAIN_PATH})
-set(TOOLCHAIN_PREFIX arm-none-linux-gnueabihf)
+set(TOOLCHAIN_PREFIX arm-linux-gnueabihf)
 
 set(CMAKE_AR                        ${TOOLCHAIN_PATH}/${TOOLCHAIN_PREFIX}-ar)
 set(CMAKE_ASM_COMPILER              ${TOOLCHAIN_PATH}/${TOOLCHAIN_PREFIX}-gcc)
