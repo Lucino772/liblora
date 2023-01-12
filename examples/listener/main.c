@@ -2,12 +2,13 @@
 #include <signal.h>
 #include <stdbool.h>
 
-#include <liblora/drivers.h>
+#include <liblora/liblora.h>
 #include <liblora/rf95.h>
 #include <wiringPi.h>
 
-liblora_wiringpi_config_t driver_config = LIBLORA_DRIVER_WIRINGPI_INIT;
-liblora_rf95_radio_t radio = LIBLORA_RF95_RADIO_INIT;
+liblora_spi_target_t spi = LIBLORA_SPI_WIRINGPI_INIT;
+liblora_com_t com = LIBLORA_COM_SPI(&spi);
+liblora_rf95_radio_t radio = LIBLORA_RF95_RADIO_INIT(&com);
 bool running = true;
 
 void sig_term_handler(int sig)
@@ -30,7 +31,6 @@ void on_receive(liblora_rf95_packet_t pkt)
 int main()
 {
     signal(SIGINT, sig_term_handler);
-    radio.driver_config = &driver_config;
 
     if (liblora_rf95_init(&radio, 8681E5, LIBLORA_RF95_SF_7, LIBLORA_RF95_BW_125) != 0)
     {
