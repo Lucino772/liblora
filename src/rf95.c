@@ -275,8 +275,9 @@ void liblora_rf95_config_frequency(liblora_rf95_radio_t *radio, long freq)
 
 void liblora_rf95_config_bandwidth(liblora_rf95_radio_t *radio, uint8_t bw, bool optimize)
 {
-    uint8_t curr = liblora_driver_spi_read(LIBLORA_RF95_REG_MODEM_CONFIG1);
-    uint8_t _new = (bw << 4) | (curr & 0xF);
+    uint8_t curr, _new;
+    liblora_com_r(radio->com, LIBLORA_RF95_REG_MODEM_CONFIG1, &curr);
+    _new = (bw << 4) | (curr & 0xF);
     liblora_com_w(radio->com, LIBLORA_RF95_REG_MODEM_CONFIG1, _new);
 
     if (optimize && bw == LIBLORA_RF95_BW_7_8)
@@ -287,8 +288,9 @@ void liblora_rf95_config_bandwidth(liblora_rf95_radio_t *radio, uint8_t bw, bool
 
 void liblora_rf95_config_spreading_factor(liblora_rf95_radio_t *radio, uint8_t sf, bool optimize)
 {
-    uint8_t curr = liblora_driver_spi_read(LIBLORA_RF95_REG_MODEM_CONFIG2);
-    uint8_t _new = (sf << 4) | (curr & 0xF);
+    uint8_t curr, _new;
+    liblora_com_r(radio->com, LIBLORA_RF95_REG_MODEM_CONFIG2, &curr);
+    _new = (sf << 4) | (curr & 0xF);
 
     if (sf == LIBLORA_RF95_SF_6)
     {
@@ -317,15 +319,17 @@ void liblora_rf95_config_spreading_factor(liblora_rf95_radio_t *radio, uint8_t s
 
 void liblora_rf95_config_coding_rate(liblora_rf95_radio_t *radio, uint8_t cr)
 {
-    uint8_t curr = liblora_driver_spi_read(LIBLORA_RF95_REG_MODEM_CONFIG1);
-    uint8_t _new = (curr & 0xF1) | (curr << 1);
+    uint8_t curr, _new;
+    liblora_com_r(radio->com, LIBLORA_RF95_REG_MODEM_CONFIG1, &curr);
+    _new = (curr & 0xF1) | (curr << 1);
     liblora_com_w(radio->com, LIBLORA_RF95_REG_MODEM_CONFIG1, _new);
 }
 
 void liblora_rf95_config_invert_iq(liblora_rf95_radio_t *radio, bool enable, bool rx)
 {
     // TODO: Check if it's correct
-    uint8_t curr = liblora_driver_spi_read(LIBLORA_RF95_REG_INVERT_IQ);
+    uint8_t curr;
+    liblora_com_r(radio->com, LIBLORA_RF95_REG_INVERT_IQ, &curr);
     if (enable)
     {
         liblora_com_w(radio->com, LIBLORA_RF95_REG_INVERT_IQ, (curr & ~0x41) | 0x40);
@@ -695,21 +699,19 @@ static void liblora_rf95_handle_interrupt(int pin, void *userdata)
 void liblora_rf95_onrx(liblora_rf95_radio_t *radio, void (*callback)(liblora_rf95_packet_t))
 {
     radio->onrx = callback;
-    liblora_driver_attach_interrupt_ex(
+    liblora_aux_interrupt(
         radio->dio0,
         INT_EDGE_RISING,
         liblora_rf95_handle_interrupt,
-        &radio,
-        radio->driver_config);
+        &radio);
 }
 
 void liblora_rf95_ontx(liblora_rf95_radio_t *radio, void (*callback)(void))
 {
     radio->ontx = callback;
-    liblora_driver_attach_interrupt_ex(
+    liblora_aux_interrupt(
         radio->dio0,
         INT_EDGE_RISING,
         liblora_rf95_handle_interrupt,
-        &radio,
-        radio->driver_config);
+        &radio);
 }

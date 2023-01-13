@@ -276,6 +276,6 @@ void liblora_aux_interrupt(int pin, int edge_type, void (*callback)(int, void*),
 
 void liblora_aux_interrupt_ex(int pin, int edge_type, void(*callback)(int, void*))
 {
-    liblora_driver_attach_interrupt_ex(pin, edge_type, callback, NULL);
+    liblora_aux_interrupt(pin, edge_type, callback, NULL);
 }
 
