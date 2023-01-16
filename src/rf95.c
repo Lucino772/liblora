@@ -254,9 +254,11 @@ void liblora_rf95_send(liblora_rf95_radio_t *radio, bool async)
 
     // wait for TxDone
     if (!async)
+    {
         liblora_com_r(radio->com, LIBLORA_RF95_REG_IRQ_FLAGS, &irq);
         while ((irq & LIBLORA_RF95_IRQ_TX_DONE) == 0)
             liblora_com_r(radio->com, LIBLORA_RF95_REG_IRQ_FLAGS, &irq);
+    }
 
     // FIXME: Remove code below
     // reset DIO mapping & IRQ mask
