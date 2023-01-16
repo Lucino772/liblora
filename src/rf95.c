@@ -140,7 +140,7 @@ int liblora_rf95_init(liblora_rf95_radio_t *radio, long freq, uint8_t sf, uint8_
         liblora_time_wait(100);
     }
 
-    if (liblora_reg_sx127x_open(radio->com) == -1)
+    if (liblora_com_open(radio->com) == -1)
         return -1;
 
     // check version
@@ -702,19 +702,19 @@ static void liblora_rf95_handle_interrupt(int pin, void *userdata)
 void liblora_rf95_onrx(liblora_rf95_radio_t *radio, void (*callback)(liblora_rf95_packet_t))
 {
     radio->onrx = callback;
-    liblora_aux_interrupt(
-        radio->dio0,
-        INT_EDGE_RISING,
-        liblora_rf95_handle_interrupt,
-        &radio);
+    // liblora_gpio_interrupt(
+    //     radio->dio0,
+    //     INT_EDGE_RISING,
+    //     liblora_rf95_handle_interrupt,
+    //     &radio);
 }
 
 void liblora_rf95_ontx(liblora_rf95_radio_t *radio, void (*callback)(void))
 {
     radio->ontx = callback;
-    liblora_aux_interrupt(
-        radio->dio0,
-        INT_EDGE_RISING,
-        liblora_rf95_handle_interrupt,
-        &radio);
+    // liblora_gpio_interrupt(
+    //     radio->dio0,
+    //     INT_EDGE_RISING,
+    //     liblora_rf95_handle_interrupt,
+    //     &radio);
 }

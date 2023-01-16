@@ -8,14 +8,21 @@ set(INCLUDE_DIR ./include/liblora)
 
 # Source Files
 set(lora_src
-    ./src/rf95.c
-    ./src/drivers/wiringpi.c
+    # Frameworks
+    ./src/frameworks/arduino.c
+    ./src/frameworks/wiringpi.c
+
+    # Radio
+    ./src/reg/sx127x.c ./src/rf95.c
+
+    # Misc
+    ./src/machine/com.c
 )
 
 # Headers file
 set(lora_h
     ${INCLUDE_DIR}/rf95.h
-    ${INCLUDE_DIR}/drivers.h
+    ${INCLUDE_DIR}/liblora.h
 )
 
 # Add library target
