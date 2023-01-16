@@ -4,10 +4,8 @@
 
 #include <liblora/liblora.h>
 #include <liblora/rf95.h>
-#include <wiringPi.h>
 
-liblora_spi_target_t spi = LIBLORA_SPI_WIRINGPI_INIT;
-liblora_com_t com = LIBLORA_COM_SPI(&spi);
+liblora_com_dev_t com = LIBLORA_SPI_COM_DEV_INIT;
 liblora_rf95_radio_t radio = LIBLORA_RF95_RADIO_INIT(&com);
 bool running = true;
 
@@ -39,7 +37,6 @@ int main()
     }
 
     // configure interrupts
-    // wiringPiISR(7, INT_EDGE_RISING, on_dio0_rise);
     liblora_rf95_onrx(&radio, on_receive);
 
     if (!liblora_rf95_recv(&radio, true))

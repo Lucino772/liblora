@@ -4,18 +4,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "../../include/liblora/liblora.h"
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-    typedef struct
-    {
-        int spi_dev;
-        int spi_ss;
-        int spi_clck_speed;
-        bool usb;
-    } liblora_com_dev_t;
 
     int liblora_com_open(liblora_com_dev_t* dev);
     int liblora_com_transfer(liblora_com_dev_t* dev, uint8_t* buffer, int len);
