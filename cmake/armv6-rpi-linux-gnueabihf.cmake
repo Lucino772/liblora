@@ -14,7 +14,7 @@ set(TOOLCHAIN_SYSROOT $ENV{TOOLCHAIN_SYSROOT})
 set(CMAKE_SYSROOT ${TOOLCHAIN_SYSROOT})
 set(CMAKE_FIND_ROOT_PATH ${CMAKE_SYSROOT})
 set(CMAKE_LIBRARY_ARCHITECTURE arm-linux-gnueabihf)
-# set(CMAKE_STAGING_PREFIX $ENV{HOME}/RPi-dev/staging-armv6-rpi) What's this ??
+set(CMAKE_STAGING_PREFIX $ENV{HOME}/opt/rpi-dev/staging-armv6-rpi)
 
 # Set the compilers for C, C++ and Fortran
 set(RPI_GCC_TRIPLE "armv6-rpi-linux-gnueabihf")
