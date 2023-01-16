@@ -15,7 +15,7 @@ int liblora_gpio_setup()
 
 int liblora_gpio_mode(int pin, int mode)
 {
-    pinMode(pin, sel);
+    pinMode(pin, mode);
     return 0;
 }
 

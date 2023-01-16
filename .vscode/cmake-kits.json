@@ -3,7 +3,7 @@
         "name": "Raspberry Pi (armv6)",
         "toolchainFile": "${workspaceFolder}/cmake/armv6-rpi-linux-gnueabihf.cmake",
         "environmentVariables": {
-            "TOOLCHAIN_SYSROOT": "/var/lib/schroot/chroots/rpios-bullseye-armhf/"
+            "TOOLCHAIN_SYSROOT": "${userHome}/opt/x-tools/armv6-rpi-linux-gnueabihf/armv6-rpi-linux-gnueabihf/sysroot/"
         }
     }
 ]
