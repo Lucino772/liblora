@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "rf95.h"
-#include "hal.h"
+#include "liblora/rf95.h"
+#include "liblora/hal.h"
 
 
 /**============================================
