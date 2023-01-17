@@ -5,7 +5,7 @@
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 
-#include "hal.h"
+#include "liblora/hal.h"
 
 // gpio.h
 int liblora_gpio_setup()
