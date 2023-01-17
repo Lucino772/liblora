@@ -8,7 +8,7 @@ RF95 radio(7, 0, 0, 6, (int)500000);
 
 void sig_term_handler(int sig)
 {
-    radio.sleep(&radio);
+    radio.sleep();
     printf("Terminated\n");
     running = false;
 }
