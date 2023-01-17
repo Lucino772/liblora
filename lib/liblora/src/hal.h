@@ -21,13 +21,9 @@ extern "C"
 {
 #endif
 
-    // COM
-    int liblora_com_open(liblora_com_dev_t* dev);
-    int liblora_com_transfer(liblora_com_dev_t* dev, uint8_t* buffer, int len);
+    // SPI
     int liblora_spi_open(liblora_com_dev_t* dev);
     int liblora_spi_transfer(liblora_com_dev_t* dev, uint8_t* buffer, int len);
-    // int liblora_usb_open(liblora_com_dev_t* dev);
-    // int liblora_usb_transfer(liblora_com_dev_t* dev, uint8_t* buffer, int len);
 
     // GPIO
     int liblora_gpio_setup();

@@ -3,7 +3,7 @@
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 
-#include "../machine.h"
+#include "hal.h"
 
 // gpio.h
 int liblora_gpio_setup()

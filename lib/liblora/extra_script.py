@@ -5,4 +5,4 @@ frameworks = env.get('PIOFRAMEWORK', [])
 if len(frameworks) == 0:
     raise RuntimeError('Invalid framework')
 
-env.Replace(SRC_FILTER=["+<src*>", "-<src/framweworks*>", "+<src/frameworks/%s>" % frameworks[0]])
+env.Replace(SRC_FILTER=["+<src*>", "-<src/hal_*>", "+<src/hal_%s>" % frameworks[0]])
