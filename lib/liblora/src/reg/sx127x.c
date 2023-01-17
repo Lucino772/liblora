@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "sx127x.h"
-#include "../machine/com.h"
+#include "../machine.h"
 
 
 int liblora_reg_sx127x_r(void* dev, uint8_t addr, uint8_t* val)

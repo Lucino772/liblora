@@ -7,9 +7,7 @@
 #include <stdio.h>
 
 #include "../include/liblora/rf95.h"
-#include "./machine/com.h"
-#include "./machine/gpio.h"
-#include "./machine/time.h"
+#include "./machine.h"
 #include "./reg/sx127x.h"
 
 /**============================================

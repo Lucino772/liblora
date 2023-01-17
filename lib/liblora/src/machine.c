@@ -1,4 +1,4 @@
-#include "com.h"
+#include "machine.h"
 
 int liblora_com_open(liblora_com_dev_t* dev)
 {

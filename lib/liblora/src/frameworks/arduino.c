@@ -3,9 +3,7 @@
 #include <Arduino.h>
 #include <SPI.H>
 
-#include "../machine/com.h"
-#include "../machine/gpio.h"
-#include "../machine/time.h"
+#include "../machine.h"
 
 // gpio.h
 int liblora_gpio_setup()
