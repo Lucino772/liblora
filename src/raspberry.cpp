@@ -5,6 +5,7 @@
 #include <liblora/rf95.h>
 
 RF95 radio(7, 0, 0, 6, (int)500000);
+bool running = true;
 
 void sig_term_handler(int sig)
 {
