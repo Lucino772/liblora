@@ -1,0 +1,9 @@
+{
+    "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
+    "name": "liblora",
+    "version": "0.1.0",
+    "build": {
+        "flags": "-D LIBLORA_USE_$PIOFRAMEWORK",
+        "extraScript": "extra_script.py"
+    }
+}

@@ -417,7 +417,7 @@ void liblora_rf95_config_symb_timeout(liblora_rf95_radio_t *radio, uint16_t time
 {
     uint8_t curr, _new;
     liblora_reg_sx127x_r(radio->com, LIBLORA_RF95_REG_MODEM_CONFIG2, &curr);
-    _new = (curr & ~0x3) | ((timeout >> 16) & 0x3);
+    _new = (curr & ~0x3) | ((timeout >> 8) & 0x3);
     liblora_reg_sx127x_w(radio->com, LIBLORA_RF95_REG_MODEM_CONFIG2, _new);
     liblora_reg_sx127x_w(radio->com, LIBLORA_RF95_REG_SYMB_TIMEOUT_LSB, timeout & 0xFF);
 }
