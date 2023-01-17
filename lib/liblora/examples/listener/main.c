@@ -4,7 +4,7 @@
 
 #include <liblora/rf95.h>
 
-liblora_com_dev_t com = LIBLORA_SPI_COM_DEV_INIT;
+liblora_com_dev_t com = { 0, 6, (int)500000, false };
 liblora_rf95_radio_t radio = LIBLORA_RF95_RADIO_INIT(&com);
 bool running = true;
 
