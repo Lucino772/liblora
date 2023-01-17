@@ -1,6 +1,4 @@
-#include <cstdint>
-#include <vector>
-
+#include <stdint.h>
 #include "c/rf95.h"
 #include "c/hal.h"
 
@@ -23,7 +21,7 @@ public:
     void setBandwidth(uint8_t bw);
     void setSpreadingFactor(uint8_t sf);
     void setCodingRate(uint8_t cr);
-    void setInvertIQ(bool enable);
+    void setInvertIQ(bool enable, bool rx);
     void setSyncWord(uint8_t value);
 
     liblora_rf95_packet_t readPacket();

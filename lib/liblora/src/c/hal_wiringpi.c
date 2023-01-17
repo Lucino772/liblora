@@ -1,3 +1,5 @@
+#ifdef LIBLORA_FRAMEWORK_WIRINGPI
+
 #include <stdlib.h>
 #include <string.h>
 #include <wiringPi.h>
@@ -59,3 +61,5 @@ void liblora_time_wait(int ms)
 {
     delay(ms);
 }
+
+#endif

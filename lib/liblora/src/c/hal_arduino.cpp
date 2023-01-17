@@ -1,7 +1,9 @@
+#ifdef LIBLORA_FRAMEWORK_ARDUINO
+
 #include <stdlib.h>
 #include <string.h>
 #include <Arduino.h>
-#include <SPI.H>
+#include <SPI.h>
 
 #include "hal.h"
 
@@ -52,8 +54,8 @@ int liblora_spi_transfer(liblora_com_dev_t *dev, uint8_t *buffer, int len)
     liblora_gpio_write(dev->spi_ss, LOW);
     SPI.beginTransaction(SPISettings(8e6, MSBFIRST, SPI_MODE0));
     SPI.transfer(buffer, len);
-    SPI.endTransaction()
-        liblora_gpio_write(dev->spi_ss, HIGH);
+    SPI.endTransaction();
+    liblora_gpio_write(dev->spi_ss, HIGH);
 
     return len;
 }
@@ -63,3 +65,5 @@ void liblora_time_wait(int ms)
 {
     delay(ms);
 }
+
+#endif

@@ -4,12 +4,21 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "../../include/liblora/liblora.h"
-
+#ifndef INPUT
 #define INPUT 0
+#endif
+
+#ifndef OUTPUT
 #define OUTPUT 1
+#endif
+
+#ifndef LOW
 #define LOW 0
+#endif
+
+#ifndef HIGH
 #define HIGH 1
+#endif
 
 #define INT_EDGE_SETUP 0
 #define INT_EDGE_FALLING 1

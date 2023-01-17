@@ -1,10 +1,18 @@
-#include "rf95.h"
+#include "../include/liblora/rf95.h"
 
 
 RF95::RF95(int dio0, int rst, int spi_dev, int spi_ss, int spi_clck_speed)
-: _radio(dio0, rst, nullptr, nullptr, nullptr), _dev(spi_dev, spi_ss, spi_clck_speed, false)
 {
+    _dev.spi_dev = spi_dev;
+    _dev.spi_ss = spi_ss;
+    _dev.spi_clck_speed = spi_clck_speed;
+    _dev.usb = false;
+
+    _radio.dio0 = dio0;
+    _radio.rst = rst;
     _radio.com = &_dev;
+    _radio.onrx = nullptr;
+    _radio.ontx = nullptr;
 }
 
 RF95::~RF95() {

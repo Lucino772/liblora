@@ -5,9 +5,10 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
-#include "../include/liblora/rf95.h"
-#include "./hal.h"
+#include "rf95.h"
+#include "hal.h"
 
 
 /**============================================
@@ -744,5 +745,5 @@ int liblora_rf95_config_interrupt(liblora_rf95_radio_t *radio, void (*callback)(
     return liblora_gpio_interrupt(
         radio->dio0,
         INT_EDGE_RISING,
-        &callback)
+        callback);
 }
