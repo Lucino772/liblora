@@ -31,22 +31,22 @@ void RF95::onTx(void (*callback)(void))
 
 void RF95::sleep()
 {
-    return liblora_rf95_sleep(&_radio);
+    liblora_rf95_sleep(&_radio);
 }
 
 void RF95::idle()
 {
-    return liblora_rf95_idle(&_radio);
+    liblora_rf95_idle(&_radio);
 }
 
-void RF95::recv(bool continuous)
+bool RF95::recv(bool continuous)
 {
     return liblora_rf95_recv(&_radio, continuous);
 }
 
 void RF95::send(bool async)
 {
-    return liblora_rf95_send(&_radio, async);
+    liblora_rf95_send(&_radio, async);
 }
 
 

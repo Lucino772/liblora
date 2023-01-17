@@ -16,7 +16,7 @@ public:
 
     void sleep();
     void idle();
-    void recv(bool continuous = false);
+    bool recv(bool continuous = false);
     void send(bool async = false);
 
     void setFrequency(long freq);
@@ -27,7 +27,7 @@ public:
     void setSyncWord(uint8_t value);
 
     liblora_rf95_packet_t readPacket();
-    void writePacket(uint8_t* buffer, int len);
+    void writePacket(uint8_t *buffer, int len);
 
     uint16_t getValidHeaderCount();
     uint16_t getValidPacketCount();
@@ -37,7 +37,7 @@ public:
     liblora_rf95_modem_status_t getModemStatus();
 
     int checkIRQ();
-    int setDio0Interrupt(void(*callback)(void));
+    int setDio0Interrupt(void (*callback)(void));
 
 private:
     liblora_rf95_radio_t _radio;

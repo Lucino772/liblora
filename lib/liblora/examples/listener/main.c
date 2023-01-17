@@ -2,7 +2,6 @@
 #include <signal.h>
 #include <stdbool.h>
 
-#include <liblora/liblora.h>
 #include <liblora/rf95.h>
 
 liblora_com_dev_t com = LIBLORA_SPI_COM_DEV_INIT;
