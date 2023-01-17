@@ -26,6 +26,11 @@ void on_receive(liblora_rf95_packet_t pkt)
     }
 }
 
+void radio1_interrupt_dio0()
+{
+    liblora_rf95_check_irq(&radio);
+}
+
 int main()
 {
     signal(SIGINT, sig_term_handler);
@@ -36,8 +41,9 @@ int main()
         return 1;
     }
 
-    // configure interrupts
-    liblora_rf95_onrx(&radio, on_receive);
+    // Config RX callback and attach interrupt
+    radio.onrx = &on_receive;
+    liblora_rf95_config_interrupt(&radio, &radio1_interrupt_dio0);
 
     if (!liblora_rf95_recv(&radio, true))
         perror("Failed to put in RX_CONT mode");

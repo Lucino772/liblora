@@ -673,48 +673,30 @@ liblora_rf95_modem_status_t liblora_rf95_modem_status(liblora_rf95_radio_t *radi
 }
 
 // interrupts
-static void liblora_rf95_handle_interrupt(int pin, void *userdata)
+int liblora_rf95_check_irq(liblora_rf95_radio_t *radio)
 {
-    liblora_rf95_radio_t *radio = (liblora_rf95_radio_t *)userdata;
-    if (radio == NULL)
-        return;
-
-    printf("liblora_rf95_handle_interrupt: interrupt received !\n");
     uint8_t irq_flags;
     liblora_reg_sx127x_r(radio->com, LIBLORA_RF95_REG_IRQ_FLAGS, &irq_flags);
 
     if ((irq_flags & LIBLORA_RF95_IRQ_RX_DONE) > 0) // RX_DONE
     {
         liblora_rf95_packet_t pkt = liblora_rf95_packet_read(radio);
-        printf("liblora_rf95_handle_interrupt: read packet !\n");
-        printf("liblora_rf95_handle_interrupt: packet b: %s, s: %i\n", pkt.buffer, pkt.size);
         if (radio->onrx != NULL)
             radio->onrx(pkt);
-        printf("liblora_rf95_handle_interrupt: callback called !\n");
     }
     else if ((irq_flags & LIBLORA_RF95_IRQ_TX_DONE) > 0) // TX_DONE
     {
         if (radio->ontx != NULL)
             radio->ontx();
     }
+
+    return 0;
 }
 
-void liblora_rf95_onrx(liblora_rf95_radio_t *radio, void (*callback)(liblora_rf95_packet_t))
+int liblora_rf95_config_interrupt(liblora_rf95_radio_t *radio, void (*callback)(void))
 {
-    radio->onrx = callback;
-    // liblora_gpio_interrupt(
-    //     radio->dio0,
-    //     INT_EDGE_RISING,
-    //     liblora_rf95_handle_interrupt,
-    //     &radio);
-}
-
-void liblora_rf95_ontx(liblora_rf95_radio_t *radio, void (*callback)(void))
-{
-    radio->ontx = callback;
-    // liblora_gpio_interrupt(
-    //     radio->dio0,
-    //     INT_EDGE_RISING,
-    //     liblora_rf95_handle_interrupt,
-    //     &radio);
+    return liblora_gpio_interrupt(
+        radio->dio0,
+        INT_EDGE_RISING,
+        &callback)
 }
