@@ -120,7 +120,6 @@
 #define LIBLORA_RF95_DIO3_PAYLOAD_CRC_ERR     0x02 // ------10
 #define LIBLORA_RF95_DIO3_NOP                 0x03 // ------11
 
-
 // registry functions
 static int liblora_rf95_reg_read(void* dev, uint8_t addr, uint8_t* val)
 {
