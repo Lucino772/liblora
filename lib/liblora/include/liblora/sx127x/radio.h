@@ -7,16 +7,16 @@
 /**============================================
  *               CONFIG
  *=============================================**/
-#define LIBLORA_SX127x_BW_7_8                 0x00
-#define LIBLORA_SX127x_BW_10_4                0x01
-#define LIBLORA_SX127x_BW_15_6                0x02
-#define LIBLORA_SX127x_BW_20_8                0x03
-#define LIBLORA_SX127x_BW_31_25               0x04
-#define LIBLORA_SX127x_BW_41_7                0x05
-#define LIBLORA_SX127x_BW_62_5                0x06
-#define LIBLORA_SX127x_BW_125                 0x07
-#define LIBLORA_SX127x_BW_250                 0x08
-#define LIBLORA_SX127x_BW_500                 0x09
+#define LIBLORA_SX127x_BW_007_80              0x00
+#define LIBLORA_SX127x_BW_010_40              0x01
+#define LIBLORA_SX127x_BW_015_60              0x02
+#define LIBLORA_SX127x_BW_020_80              0x03
+#define LIBLORA_SX127x_BW_031_25              0x04
+#define LIBLORA_SX127x_BW_041_70              0x05
+#define LIBLORA_SX127x_BW_062_50              0x06
+#define LIBLORA_SX127x_BW_125_00              0x07
+#define LIBLORA_SX127x_BW_250_00              0x08
+#define LIBLORA_SX127x_BW_500_00              0x09
 
 #define LIBLORA_SX127x_SF_6                   0x06
 #define LIBLORA_SX127x_SF_7                   0x07
