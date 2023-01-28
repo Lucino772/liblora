@@ -470,6 +470,16 @@ void liblora_sx127x_packet_write(liblora_sx127x_radio_t *radio, uint8_t *buffer,
 }
 
 // other (public)
+void liblora_sx127x_afc_update(liblora_sx127x_radio_t *radio)
+{
+    // TODO:
+    // 1. read the frequency error
+    // 2. Convert from Hertz to PPM
+    // 3. Calculate the new RF centre frequency & update register
+    // 4. Calculate offset, convert to 8bit 2's complement 
+    //    & update register 0x27
+}
+
 uint16_t liblora_sx127x_valid_header_count(liblora_sx127x_radio_t *radio)
 {
     uint8_t count_msb, count_lsb;

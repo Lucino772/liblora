@@ -148,6 +148,7 @@ extern "C"
     uint8_t liblora_sx127x_packet_strength(liblora_sx127x_radio_t *radio);
 
     // other (public)
+    void liblora_sx127x_afc_update(liblora_sx127x_radio_t *radio);
     uint16_t liblora_sx127x_valid_header_count(liblora_sx127x_radio_t *radio);
     uint16_t liblora_sx127x_valid_packet_count(liblora_sx127x_radio_t *radio);
     int64_t liblora_sx127x_frequency_error(liblora_sx127x_radio_t *radio);
