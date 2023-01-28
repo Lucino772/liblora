@@ -48,6 +48,9 @@
 #define LIBLORA_SX127x_PA_RAMP_12US           0x0E
 #define LIBLORA_SX127x_PA_RAMP_10US           0x0F
 
+
+#define LIBLORA_SX127x_RADIO_INIT(com_ptr)    { 7, 0, com_ptr, NULL, NULL }
+
 #ifdef __cplusplus
 extern "C"
 {

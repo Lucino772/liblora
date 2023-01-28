@@ -2,20 +2,21 @@
 #include <signal.h>
 #include <stdbool.h>
 
-#include <liblora/rf95.h>
+#include <liblora/board.h>
+#include <liblora/sx127x/radio.h>
 
 liblora_com_dev_t com = { 0, 6, (int)500000, false };
-liblora_rf95_radio_t radio = LIBLORA_RF95_RADIO_INIT(&com);
+liblora_sx127x_radio_t radio = LIBLORA_SX127x_RADIO_INIT(&com);
 bool running = true;
 
 void sig_term_handler(int sig)
 {
-    liblora_rf95_sleep(&radio);
+    liblora_sx127x_sleep(&radio);
     printf("Terminated\n");
     running = false;
 }
 
-void on_receive(liblora_rf95_packet_t pkt)
+void on_receive(liblora_sx127x_packet_t pkt)
 {
     if (pkt.size > 0)
     {
@@ -27,14 +28,14 @@ void on_receive(liblora_rf95_packet_t pkt)
 
 void radio1_interrupt_dio0()
 {
-    liblora_rf95_check_irq(&radio);
+    liblora_sx127x_check_irq(&radio);
 }
 
 int main()
 {
     signal(SIGINT, sig_term_handler);
 
-    if (liblora_rf95_init(&radio, 8681E5, LIBLORA_RF95_SF_7, LIBLORA_RF95_BW_125) != 0)
+    if (liblora_sx127x_init(&radio, 8681E5, LIBLORA_SX127x_SF_7, LIBLORA_SX127x_BW_125_00) != 0)
     {
         perror("Failed to initialize radio\n");
         return 1;
@@ -42,13 +43,13 @@ int main()
 
     // Config RX callback and attach interrupt
     radio.onrx = &on_receive;
-    liblora_rf95_config_interrupt(&radio, &radio1_interrupt_dio0);
+    liblora_sx127x_config_interrupt(&radio, &radio1_interrupt_dio0);
 
-    if (!liblora_rf95_recv(&radio, true))
+    if (!liblora_sx127x_recv(&radio, true))
         perror("Failed to put in RX_CONT mode");
     else
         while (running);
 
-    liblora_rf95_sleep(&radio);
+    liblora_sx127x_sleep(&radio);
     return 0;
 }
