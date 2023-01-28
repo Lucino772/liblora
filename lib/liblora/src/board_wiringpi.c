@@ -5,7 +5,7 @@
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 
-#include "liblora/hal.h"
+#include "liblora/board.h"
 
 // gpio.h
 int liblora_gpio_setup()
@@ -46,9 +46,9 @@ int liblora_spi_open(liblora_com_dev_t* dev)
 
 int liblora_spi_transfer(liblora_com_dev_t* dev, uint8_t* buffer, int len)
 {
-    liblora_gpio_write(dev->spi_ss, LOW);
+    liblora_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_LOW);
     int nread = wiringPiSPIDataRW(dev->spi_dev, buffer, len);
-    liblora_gpio_write(dev->spi_ss, HIGH);
+    liblora_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_HIGH);
 
     if (nread > 0)
         return nread;

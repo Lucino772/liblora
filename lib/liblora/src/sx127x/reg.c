@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "liblora/sx127x/reg.h"
-#include "liblora/hal.h"
+#include "liblora/board.h"
 
 static int reg_r(void *dev, uint8_t addr, uint8_t *val)
 {

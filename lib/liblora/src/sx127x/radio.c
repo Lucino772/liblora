@@ -4,7 +4,7 @@
 
 #include "liblora/sx127x/radio.h"
 #include "liblora/sx127x/reg.h"
-#include "liblora/hal.h"
+#include "liblora/board.h"
 
 /**============================================
  *               OPMODE
@@ -57,15 +57,15 @@ int liblora_sx127x_init(liblora_sx127x_radio_t *radio, long freq, uint8_t sf, ui
     uint8_t ver;
 
     liblora_gpio_setup();
-    liblora_gpio_mode(radio->dio0, INPUT);
-    liblora_gpio_mode(radio->rst, OUTPUT);
+    liblora_gpio_mode(radio->dio0, LIBLORA_BOARD_GPIO_MODE_INPUT);
+    liblora_gpio_mode(radio->rst, LIBLORA_BOARD_GPIO_MODE_OUTPUT);
 
     // Reset chip
     if (radio->rst != -1)
     {
-        liblora_gpio_write(radio->rst, LOW);
+        liblora_gpio_write(radio->rst, LIBLORA_BOARD_GPIO_STATE_LOW);
         liblora_time_wait(100);
-        liblora_gpio_write(radio->rst, HIGH);
+        liblora_gpio_write(radio->rst, LIBLORA_BOARD_GPIO_STATE_HIGH);
         liblora_time_wait(100);
     }
 
@@ -570,6 +570,6 @@ int liblora_sx127x_config_interrupt(liblora_sx127x_radio_t *radio, void (*callba
 {
     return liblora_gpio_interrupt(
         radio->dio0,
-        INT_EDGE_RISING,
+        LIBLORA_BOARD_GPIO_EDGE_RISING,
         callback);
 }

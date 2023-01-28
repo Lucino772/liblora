@@ -1,29 +1,19 @@
-#ifndef _LIBLORA_MACHINE_H_
-#define _LIBLORA_MACHINE_H_
+#ifndef _LIBLORA_BOARD_H_
+#define _LIBLORA_BOARD_H_
 
 #include <stdint.h>
 #include <stdbool.h>
 
-#ifndef INPUT
-#define INPUT 0
-#endif
+#define LIBLORA_BOARD_GPIO_MODE_INPUT       0
+#define LIBLORA_BOARD_GPIO_MODE_OUTPUT      1
 
-#ifndef OUTPUT
-#define OUTPUT 1
-#endif
+#define LIBLORA_BOARD_GPIO_STATE_LOW        0
+#define LIBLORA_BOARD_GPIO_STATE_HIGH       1
 
-#ifndef LOW
-#define LOW 0
-#endif
-
-#ifndef HIGH
-#define HIGH 1
-#endif
-
-#define INT_EDGE_SETUP 0
-#define INT_EDGE_FALLING 1
-#define INT_EDGE_RISING 2
-#define INT_EDGE_BOTH 3
+#define LIBLORA_BOARD_GPIO_EDGE_SETUP       0
+#define LIBLORA_BOARD_GPIO_EDGE_FALLING     1
+#define LIBLORA_BOARD_GPIO_EDGE_RISING      2
+#define LIBLORA_BOARD_GPIO_EDGE_BOTH        3
 
 #ifdef __cplusplus
 extern "C"

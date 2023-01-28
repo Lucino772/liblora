@@ -5,7 +5,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-#include "liblora/hal.h"
+#include "liblora/board.h"
 
 // gpio.h
 int liblora_gpio_setup()
@@ -43,7 +43,7 @@ int liblora_gpio_interrupt(int pin, int edge_type, void (*callback)(void))
 // com.h
 int liblora_spi_open(liblora_com_dev_t *dev)
 {
-    liblora_gpio_mode(dev->spi_ss, OUTPUT);
+    liblora_gpio_mode(dev->spi_ss, LIBLORA_BOARD_GPIO_MODE_OUTPUT);
     SPI.begin();
     return 0;
 }
@@ -51,11 +51,11 @@ int liblora_spi_open(liblora_com_dev_t *dev)
 int liblora_spi_transfer(liblora_com_dev_t *dev, uint8_t *buffer, int len)
 {
     // FIXME: Check if transfer returns something
-    liblora_gpio_write(dev->spi_ss, LOW);
+    liblora_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_LOW);
     SPI.beginTransaction(SPISettings(8e6, MSBFIRST, SPI_MODE0));
     SPI.transfer(buffer, len);
     SPI.endTransaction();
-    liblora_gpio_write(dev->spi_ss, HIGH);
+    liblora_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_HIGH);
 
     return len;
 }
