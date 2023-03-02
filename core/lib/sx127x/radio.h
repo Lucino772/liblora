@@ -73,6 +73,7 @@ extern "C"
         int rst;
         liblora_dev_t* dev;
         liblora_board_t* board;
+        void* userdata;
 
         void (*onrx)(liblora_sx127x_packet_t);
         void (*ontx)(void);

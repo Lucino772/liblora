@@ -56,24 +56,24 @@ int liblora_sx127x_init(liblora_sx127x_radio_t *radio, long freq, uint8_t sf, ui
 {
     uint8_t ver;
 
-    liblora_gpio_setup();
-    liblora_gpio_mode(radio->dio0, LIBLORA_BOARD_GPIO_MODE_INPUT);
-    liblora_gpio_mode(radio->rst, LIBLORA_BOARD_GPIO_MODE_OUTPUT);
+    radio->board->gpio_setup(radio->userdata);
+    radio->board->gpio_mode(radio->dio0, LIBLORA_BOARD_GPIO_MODE_INPUT, radio->userdata);
+    radio->board->gpio_mode(radio->rst, LIBLORA_BOARD_GPIO_MODE_OUTPUT, radio->userdata);
 
     // Reset chip
     if (radio->rst != -1)
     {
-        liblora_gpio_write(radio->rst, LIBLORA_BOARD_GPIO_STATE_LOW);
-        liblora_time_wait(100);
-        liblora_gpio_write(radio->rst, LIBLORA_BOARD_GPIO_STATE_HIGH);
-        liblora_time_wait(100);
+        radio->board->gpio_write(radio->rst, LIBLORA_BOARD_GPIO_STATE_LOW, radio->userdata);
+        radio->board->wait(100, radio->userdata);
+        radio->board->gpio_write(radio->rst, LIBLORA_BOARD_GPIO_STATE_HIGH, radio->userdata);
+        radio->board->wait(100, radio->userdata);
     }
 
-    if (liblora_spi_open(radio->com) == -1)
+    if (radio->board->spi_open(radio->dev, radio->userdata) == -1)
         return -1;
 
     // check version
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_VERSION, &ver);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_VERSION, &ver, radio->userdata);
     if (ver != 0x12)
         return -1;
 
@@ -92,8 +92,8 @@ int liblora_sx127x_init(liblora_sx127x_radio_t *radio, long freq, uint8_t sf, ui
     liblora_sx127x_config_agc(radio, true);
 
     // Reset fifo addresses
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_FIFO_TX_BASE_ADDR, 0x00);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_FIFO_RX_BASE_ADDR, 0x00);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_FIFO_TX_BASE_ADDR, 0x00, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_FIFO_RX_BASE_ADDR, 0x00, radio->userdata);
 
     // liblora_sx127x_sleep(radio);
     liblora_sx127x_idle(radio);
@@ -106,10 +106,10 @@ liblora_sx127x_opmode_t liblora_sx127x_opmode_read(liblora_sx127x_radio_t *radio
     uint8_t _low_freq, _shared_reg, _lora;
 
     liblora_sx127x_opmode_t ret;
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_OPMODE_DEV_MODE, &(ret.mode));
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_OPMODE_LF_MODE, &_low_freq);
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_OPMODE_SHARED_ACCESS, &_shared_reg);
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_OPMODE_LR_MODE, &_lora);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_OPMODE_DEV_MODE, &(ret.mode), radio->userdata);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_OPMODE_LF_MODE, &_low_freq, radio->userdata);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_OPMODE_SHARED_ACCESS, &_shared_reg, radio->userdata);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_OPMODE_LR_MODE, &_lora, radio->userdata);
 
     ret.low_freq = _low_freq == 1 ? true : false;
     ret.shared_reg = _shared_reg == 1 ? true : false;
@@ -120,10 +120,10 @@ liblora_sx127x_opmode_t liblora_sx127x_opmode_read(liblora_sx127x_radio_t *radio
 
 void liblora_sx127x_opmode_write(liblora_sx127x_radio_t *radio, liblora_sx127x_opmode_t _opmode)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_OPMODE_DEV_MODE, _opmode.mode);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_OPMODE_LF_MODE, _opmode.low_freq);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_OPMODE_SHARED_ACCESS, _opmode.shared_reg);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_OPMODE_LR_MODE, _opmode.lora);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_OPMODE_DEV_MODE, _opmode.mode, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_OPMODE_LF_MODE, _opmode.low_freq, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_OPMODE_SHARED_ACCESS, _opmode.shared_reg, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_OPMODE_LR_MODE, _opmode.lora, radio->userdata);
 }
 
 // opmode (public)
@@ -149,11 +149,11 @@ bool liblora_sx127x_recv(liblora_sx127x_radio_t *radio, bool continuous)
     if (liblora_sx127x_opmode_read(radio).mode != _mode)
     {
         // DIO0=RXDONE, DIO1=NOP, DIO2=NOP, DIO3=NOP
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_DIO_MAPPING1, LIBLORA_SX127x_DIO0_RX_DONE | LIBLORA_SX127x_DIO1_NOP | LIBLORA_SX127x_DIO2_NOP | LIBLORA_SX127x_DIO3_NOP);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_DIO_MAPPING1, LIBLORA_SX127x_DIO0_RX_DONE | LIBLORA_SX127x_DIO1_NOP | LIBLORA_SX127x_DIO2_NOP | LIBLORA_SX127x_DIO3_NOP, radio->userdata);
 
         // Reset IRQ flags and set IRQ flags mask
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, 0xFF);
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS_MASK, LIBLORA_SX127x_IRQ_TX_DONE | LIBLORA_SX127x_IRQ_CAD_DONE | LIBLORA_SX127x_IRQ_FHSS_CHANGE_CHAN | LIBLORA_SX127x_IRQ_CAD_DETECTED);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, 0xFF, radio->userdata);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS_MASK, LIBLORA_SX127x_IRQ_TX_DONE | LIBLORA_SX127x_IRQ_CAD_DONE | LIBLORA_SX127x_IRQ_FHSS_CHANGE_CHAN | LIBLORA_SX127x_IRQ_CAD_DETECTED, radio->userdata);
 
         // Change OpMode
         liblora_sx127x_opmode_t curr = liblora_sx127x_opmode_read(radio);
@@ -169,11 +169,11 @@ void liblora_sx127x_send(liblora_sx127x_radio_t *radio, bool async)
     uint8_t irq;
 
     // DIO0=TXDONE, DIO1=NOP, DIO2=NOP, DIO3=NOP
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_DIO_MAPPING1, LIBLORA_SX127x_DIO0_TX_DONE | LIBLORA_SX127x_DIO1_NOP | LIBLORA_SX127x_DIO2_NOP | LIBLORA_SX127x_DIO3_NOP);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_DIO_MAPPING1, LIBLORA_SX127x_DIO0_TX_DONE | LIBLORA_SX127x_DIO1_NOP | LIBLORA_SX127x_DIO2_NOP | LIBLORA_SX127x_DIO3_NOP, radio->userdata);
 
     // Reset IRQ flags and set IRQ flags mask
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, 0xFF);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS_MASK, ~(LIBLORA_SX127x_IRQ_TX_DONE));
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, 0xFF, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS_MASK, ~(LIBLORA_SX127x_IRQ_TX_DONE), radio->userdata);
 
     // OPMODE_TX: Transmit packet
     liblora_sx127x_opmode_t curr = liblora_sx127x_opmode_read(radio);
@@ -183,29 +183,29 @@ void liblora_sx127x_send(liblora_sx127x_radio_t *radio, bool async)
     // wait for TxDone
     if (!async)
     {
-        liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, &irq);
+        liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, &irq, radio->userdata);
         while ((irq & LIBLORA_SX127x_IRQ_TX_DONE) == 0)
-            liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, &irq);
+            liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, &irq, radio->userdata);
     }
 
     // FIXME: Remove code below
     // reset DIO mapping & IRQ mask
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS_MASK, 0xFF);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_DIO_MAPPING1, 0xFF);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS_MASK, 0xFF, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_DIO_MAPPING1, 0xFF, radio->userdata);
 }
 
 // config (public)
 void liblora_sx127x_config_frequency(liblora_sx127x_radio_t *radio, long freq)
 {
     uint64_t frf = ((uint64_t)freq << 19) / 32000000;
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_FRF_MSB, (uint8_t)(frf >> 16));
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_FRF_MID, (uint8_t)(frf >> 8));
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_FRF_LSB, (uint8_t)(frf >> 0));
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_FRF_MSB, (uint8_t)(frf >> 16), radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_FRF_MID, (uint8_t)(frf >> 8), radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_FRF_LSB, (uint8_t)(frf >> 0), radio->userdata);
 }
 
 void liblora_sx127x_config_bandwidth(liblora_sx127x_radio_t *radio, uint8_t bw, bool optimize)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_MOD_CFG1_BW, bw);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_MOD_CFG1_BW, bw, radio->userdata);
 
     if (optimize && bw == LIBLORA_SX127x_BW_7_8)
         liblora_sx127x_config_high_bw_optimization(radio, true);
@@ -233,16 +233,16 @@ void liblora_sx127x_config_spreading_factor(liblora_sx127x_radio_t *radio, uint8
 
     // TODO: understand why ?
     // if (sf == sf_t::SF10 || sf == sf_t::SF11 || sf == sf_t::SF12) {
-    //     liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_SYMB_TIMEOUT_LSB, 0x05);
+    //     liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_SYMB_TIMEOUT_LSB, 0x05);
     // } else {
-    //     liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_SYMB_TIMEOUT_LSB, 0x08);
+    //     liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_SYMB_TIMEOUT_LSB, 0x08);
     // }
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_MOD_CFG2_SF, sf);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_MOD_CFG2_SF, sf, radio->userdata);
 }
 
 void liblora_sx127x_config_coding_rate(liblora_sx127x_radio_t *radio, uint8_t cr)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_MOD_CFG1_CR, cr);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_MOD_CFG1_CR, cr, radio->userdata);
 }
 
 void liblora_sx127x_config_invert_iq(liblora_sx127x_radio_t *radio, bool enable, bool rx)
@@ -250,37 +250,37 @@ void liblora_sx127x_config_invert_iq(liblora_sx127x_radio_t *radio, bool enable,
     // FIXME: Understand which flag must be set RX or TX
     if (enable)
     {
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_INVERT_IQ_RX, 0x01);
-        // liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_INVERT_IQ_TX, 0x01);
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_INVERT_IQ2, 0x19);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_INVERT_IQ_RX, 0x01, radio->userdata);
+        // liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_INVERT_IQ_TX, 0x01);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_INVERT_IQ2, 0x19, radio->userdata);
     }
     else
     {
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_INVERT_IQ_RX, 0x00);
-        // liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_INVERT_IQ_TX, 0x00);
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_INVERT_IQ2, 0x1D);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_INVERT_IQ_RX, 0x00, radio->userdata);
+        // liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_INVERT_IQ_TX, 0x00);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_INVERT_IQ2, 0x1D, radio->userdata);
     }
 }
 
 void liblora_sx127x_config_sync_word(liblora_sx127x_radio_t *radio, uint8_t value)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_SYNC_WORD, value);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_SYNC_WORD, value, radio->userdata);
 }
 
 // config/optimization (private)
 void liblora_sx127x_config_low_data_rate_optimization(liblora_sx127x_radio_t *radio, bool enable)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_CFG3_LORA_LOW_DR_OPTI, enable ? 1 : 0);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_CFG3_LORA_LOW_DR_OPTI, enable ? 1 : 0, radio->userdata);
 }
 
 void liblora_sx127x_config_detection_optimization(liblora_sx127x_radio_t *radio, uint8_t value)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_DETECT_OPTI, value);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_DETECT_OPTI, value, radio->userdata);
 }
 
 void liblora_sx127x_config_detection_threshold(liblora_sx127x_radio_t *radio, uint8_t value)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_DETECT_THRESH, value);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_DETECT_THRESH, value, radio->userdata);
 }
 
 void liblora_sx127x_config_high_bw_optimization(liblora_sx127x_radio_t *radio, bool enable)
@@ -288,98 +288,98 @@ void liblora_sx127x_config_high_bw_optimization(liblora_sx127x_radio_t *radio, b
     // FIXME: Values differs for frequencies
     if (enable)
     {
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_HIGH_BW_OPTI1, 0x02);
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_HIGH_BW_OPTI2, 0x64);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_HIGH_BW_OPTI1, 0x02, radio->userdata);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_HIGH_BW_OPTI2, 0x64, radio->userdata);
     }
     else
     {
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_HIGH_BW_OPTI1, 0x03);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_HIGH_BW_OPTI1, 0x03, radio->userdata);
 
         // Automatically reset by the chip
-        // liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_HIGH_BW_OPTI2, 0x65);
+        // liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_HIGH_BW_OPTI2, 0x65);
     }
 }
 
 // config (private)
 void liblora_sx127x_config_crc(liblora_sx127x_radio_t *radio, bool enable)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_MOD_CFG2_RX_PAYLOAD_CRC, enable ? 1 : 0);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_MOD_CFG2_RX_PAYLOAD_CRC, enable ? 1 : 0, radio->userdata);
 }
 
 void liblora_sx127x_config_header_mode(liblora_sx127x_radio_t *radio, bool _explicit)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_MOD_CFG1_HEADER_MODE, _explicit ? 0 : 1);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_MOD_CFG1_HEADER_MODE, _explicit ? 0 : 1, radio->userdata);
 }
 
 void liblora_sx127x_config_symb_timeout(liblora_sx127x_radio_t *radio, uint16_t timeout)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_MOD_CFG2_SYMB_TMOUT_MSB, (timeout >> 8) & 0x3);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_MOD_SYMB_TMOUT_LSB, timeout & 0xFF);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_MOD_CFG2_SYMB_TMOUT_MSB, (timeout >> 8) & 0x3, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_MOD_SYMB_TMOUT_LSB, timeout & 0xFF, radio->userdata);
 }
 
 void liblora_sx127x_config_preamble_len(liblora_sx127x_radio_t *radio, uint16_t len)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_PREAMBLE_LEN_MSB, len >> 8);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_PREAMBLE_LEN_LSB, len & 0xFF);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_PREAMBLE_LEN_MSB, len >> 8, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_PREAMBLE_LEN_LSB, len & 0xFF, radio->userdata);
 }
 
 void liblora_sx127x_config_max_payload_len(liblora_sx127x_radio_t *radio, uint8_t len)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_MAX_PAYLOAD_LEN, len);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_MAX_PAYLOAD_LEN, len, radio->userdata);
 }
 
 void liblora_sx127x_config_hop_period(liblora_sx127x_radio_t *radio, uint8_t value)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_FREQ_HOP_PERDIOD, value);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_FREQ_HOP_PERDIOD, value, radio->userdata);
 }
 
 void liblora_sx127x_config_pa(liblora_sx127x_radio_t *radio, bool boost, uint8_t power, uint8_t max_power)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_PA_OUTPUT_POW, power - 2);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_PA_MAX_POW, max_power);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_PA_SELECT, boost ? 1 : 0);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_PA_OUTPUT_POW, power - 2, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_PA_MAX_POW, max_power, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_PA_SELECT, boost ? 1 : 0, radio->userdata);
 }
 
 void liblora_sx127x_config_agc(liblora_sx127x_radio_t *radio, bool enable)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_CFG3_AGC_ON, enable ? 1 : 0);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_CFG3_AGC_ON, enable ? 1 : 0, radio->userdata);
 }
 
 void liblora_sx127x_config_pa_ramp(liblora_sx127x_radio_t *radio, uint8_t ramp)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_PA_RAMP, ramp);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_PA_RAMP, ramp, radio->userdata);
 }
 
 void liblora_sx127x_config_ocp(liblora_sx127x_radio_t *radio, bool enable, uint8_t trim)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_OCP_ON, enable ? 1 : 0);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_OCP_TRIM, trim);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_OCP_ON, enable ? 1 : 0, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_OCP_TRIM, trim, radio->userdata);
 }
 
 void liblora_sx127x_config_lna(liblora_sx127x_radio_t *radio, bool boost, uint8_t gain)
 {
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LNA_BOOST_HF, boost ? 0 : 3);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LNA_GAIN, gain);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LNA_BOOST_HF, boost ? 0 : 3, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LNA_GAIN, gain, radio->userdata);
 }
 
 // fifo (private)
 void liblora_sx127x_fifo_write(liblora_sx127x_radio_t *radio, uint8_t *buffer, uint8_t len)
 {
-    liblora_sx127x_reg_writeb(radio->com, LIBLORA_SX127x_REG_FIFO, buffer, len);
+    liblora_sx127x_reg_writeb(radio->dev, LIBLORA_SX127x_REG_FIFO, buffer, len, radio->userdata);
 }
 
 void liblora_sx127x_fifo_read(liblora_sx127x_radio_t *radio, uint8_t *buffer, uint8_t len)
 {
     // FIXME: try using liblora_driver_spi_read_burst
     for (int i = 0; i < len; i++)
-        liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_FIFO, &buffer[i]);
+        liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_FIFO, &buffer[i], radio->userdata);
 }
 
 // packet (private)
 uint8_t liblora_sx127x_packet_size(liblora_sx127x_radio_t *radio)
 {
     uint8_t pkt_size;
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_FIFO_RX_BYTES_NB, &pkt_size);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_FIFO_RX_BYTES_NB, &pkt_size, radio->userdata);
     return pkt_size;
 }
 
@@ -388,14 +388,14 @@ uint8_t liblora_sx127x_packet_rssi(liblora_sx127x_radio_t *radio)
     // FIXME: Fix correction based on freq
     uint8_t rssi;
     int rssi_corr = 157;
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_PKT_RSSI, &rssi);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_PKT_RSSI, &rssi, radio->userdata);
     return rssi - rssi_corr;
 }
 
 int8_t liblora_sx127x_packet_snr(liblora_sx127x_radio_t *radio)
 {
     uint8_t snr;
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_PKT_SNR, &snr);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_PKT_SNR, &snr, radio->userdata);
     return ((int8_t)snr) >> 2;
 }
 
@@ -422,11 +422,11 @@ liblora_sx127x_packet_t liblora_sx127x_packet_read(liblora_sx127x_radio_t *radio
         .rssi = 0,
         .strength = 0};
     
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, &irq_flags);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, &irq_flags, radio->userdata);
     if ((irq_flags & LIBLORA_SX127x_IRQ_RX_DONE) != 0)
     {
         // clear RX_DONE IRQ flags
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, LIBLORA_SX127x_IRQ_RX_DONE | LIBLORA_SX127x_IRQ_VALID_HEADER);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, LIBLORA_SX127x_IRQ_RX_DONE | LIBLORA_SX127x_IRQ_VALID_HEADER, radio->userdata);
 
         // check IRQ flags
         if ((irq_flags & (LIBLORA_SX127x_IRQ_RX_TIMEOUT | LIBLORA_SX127x_IRQ_PAYLOAD_CRC_ERR)) != 0)
@@ -437,8 +437,8 @@ liblora_sx127x_packet_t liblora_sx127x_packet_read(liblora_sx127x_radio_t *radio
         {
             pkt.size = liblora_sx127x_packet_size(radio);
 
-            liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_FIFO_CURR_ADDR, &curr_addr);
-            liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_FIFO_ADDR_PTR, curr_addr);
+            liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_FIFO_CURR_ADDR, &curr_addr, radio->userdata);
+            liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_FIFO_ADDR_PTR, curr_addr, radio->userdata);
             liblora_sx127x_fifo_read(radio, pkt.buffer, pkt.size);
 
             pkt.pkt_snr = liblora_sx127x_packet_snr(radio);
@@ -448,9 +448,9 @@ liblora_sx127x_packet_t liblora_sx127x_packet_read(liblora_sx127x_radio_t *radio
         }
 
         // reset FIFO addr to RX base addr & reset IRQ flags
-        liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_FIFO_RX_BASE_ADDR, &base_addr);
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_FIFO_ADDR_PTR, base_addr);
-        liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, irq_flags);
+        liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_FIFO_RX_BASE_ADDR, &base_addr, radio->userdata);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_FIFO_ADDR_PTR, base_addr, radio->userdata);
+        liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, irq_flags, radio->userdata);
     }
 
     return pkt;
@@ -461,11 +461,11 @@ void liblora_sx127x_packet_write(liblora_sx127x_radio_t *radio, uint8_t *buffer,
     // TODO: Logic in Explicit Header Mode (default)
     uint8_t base_addr;
 
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, 0xFF);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, 0xFF, radio->userdata);
 
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_FIFO_TX_BASE_ADDR, &base_addr);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_FIFO_ADDR_PTR, base_addr);
-    liblora_sx127x_reg_write(radio->com, LIBLORA_SX127x_REG_LORA_PAYLOAD_LEN, len);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_FIFO_TX_BASE_ADDR, &base_addr, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_FIFO_ADDR_PTR, base_addr, radio->userdata);
+    liblora_sx127x_reg_write(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_PAYLOAD_LEN, len, radio->userdata);
     liblora_sx127x_fifo_write(radio, buffer, len);
 }
 
@@ -484,8 +484,8 @@ uint16_t liblora_sx127x_valid_header_count(liblora_sx127x_radio_t *radio)
 {
     uint8_t count_msb, count_lsb;
 
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_RX_HEADER_CNT_MSB, &count_msb);
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_RX_HEADER_CNT_LSB, &count_lsb);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_RX_HEADER_CNT_MSB, &count_msb, radio->userdata);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_RX_HEADER_CNT_LSB, &count_lsb, radio->userdata);
 
     return ((uint16_t)(count_msb) << 8) | count_lsb;
 }
@@ -494,8 +494,8 @@ uint16_t liblora_sx127x_valid_packet_count(liblora_sx127x_radio_t *radio)
 {
     uint8_t count_msb, count_lsb;
 
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_RX_PKT_CNT_MSB, &count_msb);
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_RX_PKT_CNT_LSB, &count_lsb);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_RX_PKT_CNT_MSB, &count_msb, radio->userdata);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_RX_PKT_CNT_LSB, &count_lsb, radio->userdata);
 
     return ((uint16_t)(count_msb) << 8) | count_lsb;
 }
@@ -524,7 +524,7 @@ uint8_t liblora_sx127x_rssi(liblora_sx127x_radio_t *radio)
     int rssi_corr = 157;
 
     uint8_t rssi;
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_RSSI, &rssi);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_RSSI, &rssi, radio->userdata);
 
     return rssi - rssi_corr;
 }
@@ -532,14 +532,14 @@ uint8_t liblora_sx127x_rssi(liblora_sx127x_radio_t *radio)
 uint8_t liblora_sx127x_random(liblora_sx127x_radio_t *radio)
 {
     uint8_t random;
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_RSSI_WIDEBAND, &random);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_RSSI_WIDEBAND, &random, radio->userdata);
     return random;
 }
 
 liblora_sx127x_modem_status_t liblora_sx127x_modem_status(liblora_sx127x_radio_t *radio)
 {
     uint8_t curr;
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_MODEM_STATUS, &curr);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_MODEM_STATUS, &curr, radio->userdata);
 
     liblora_sx127x_modem_status_t options[] = {
         SIGNAL_DETECTED,
@@ -559,7 +559,7 @@ liblora_sx127x_modem_status_t liblora_sx127x_modem_status(liblora_sx127x_radio_t
 int liblora_sx127x_check_irq(liblora_sx127x_radio_t *radio)
 {
     uint8_t irq_flags;
-    liblora_sx127x_reg_read(radio->com, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, &irq_flags);
+    liblora_sx127x_reg_read(radio->dev, radio->board, LIBLORA_SX127x_REG_LORA_IRQ_FLAGS, &irq_flags, radio->userdata);
 
     if ((irq_flags & LIBLORA_SX127x_IRQ_RX_DONE) > 0) // RX_DONE
     {
