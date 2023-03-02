@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "../board.h"
 
 // Access Mode
 #define SX127x_REG_FSK 1
@@ -284,10 +285,10 @@ extern "C"
 {
 #endif
 
-    int liblora_sx127x_reg_read(void *dev, uint32_t reg, uint8_t *val);
-    int liblora_sx127x_reg_readb(void *dev, uint32_t reg, uint8_t *buff, int len);
-    int liblora_sx127x_reg_write(void *dev, uint32_t reg, uint8_t val);
-    int liblora_sx127x_reg_writeb(void *dev, uint32_t reg, uint8_t *buff, int len);
+    int liblora_sx127x_reg_read(liblora_dev_t *dev, liblora_board_t *board, uint32_t reg, uint8_t *val, void* userdata);
+    int liblora_sx127x_reg_readb(liblora_dev_t *dev, liblora_board_t *board, uint32_t reg, uint8_t *buff, int len, void* userdata);
+    int liblora_sx127x_reg_write(liblora_dev_t *dev, liblora_board_t *board, uint32_t reg, uint8_t val, void* userdata);
+    int liblora_sx127x_reg_writeb(liblora_dev_t *dev, liblora_board_t *board, uint32_t reg, uint8_t *buff, int len, void* userdata);
 
 #ifdef __cplusplus
 }

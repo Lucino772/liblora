@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "../board.h"
 
 /**============================================
  *               CONFIG
@@ -49,7 +50,7 @@
 #define LIBLORA_SX127x_PA_RAMP_10US           0x0F
 
 
-#define LIBLORA_SX127x_RADIO_INIT(com_ptr)    { 7, 0, com_ptr, NULL, NULL }
+#define LIBLORA_SX127x_RADIO_INIT(dev_ptr, board_ptr)    { 7, 0, dev_ptr, board_ptr, NULL, NULL }
 
 #ifdef __cplusplus
 extern "C"
@@ -70,7 +71,8 @@ extern "C"
     {
         int dio0;
         int rst;
-        void* com;
+        liblora_dev_t* dev;
+        liblora_board_t* board;
 
         void (*onrx)(liblora_sx127x_packet_t);
         void (*ontx)(void);

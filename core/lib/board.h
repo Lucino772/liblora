@@ -8,17 +8,17 @@ extern "C"
 {
 #endif
 
-    typedef struct liblora_com_dev_t {
+    typedef struct liblora_dev_t {
         int spi_dev;
         int spi_ss;
         int spi_clck_speed;
-    } liblora_com_dev_t;
+    } liblora_dev_t;
 
     typedef struct liblora_board_t
     {
         // SPI
-        int (*spi_open)(liblora_com_dev_t* dev, void* userdata);
-        int (*spi_transfer)(liblora_com_dev_t* dev, uint8_t* buffer, int len, void* userdata);
+        int (*spi_open)(liblora_dev_t* dev, void* userdata);
+        int (*spi_transfer)(liblora_dev_t* dev, uint8_t* buffer, int len, void* userdata);
 
         // SPIO
         int (*gpio_setup)(void);
