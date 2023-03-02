@@ -5,7 +5,7 @@
 ```ascii
 examples
 core
-├── radios
+├── lib
 │   ├── sx127x
 │   ├── sx130x
 │   └── ...
@@ -29,7 +29,7 @@ This directory contains all the examples for multiple platforms.
 <!-- core -->
 <u>`core/`</u>:
 
-This directory contains an implementation in C (`radios/`) and C++ (`classes/`) of each radio. It also contains the implementation of different protocols, LoRaWAN for example (`proto/`). The last sub-directory, `hal/` contains a abstraction layer of all the radios.
+This directory contains an implementation in C (`lib/`) and C++ (`classes/`) of each radio. It also contains the implementation of different protocols, LoRaWAN for example (`proto/`). The last sub-directory, `hal/` contains a abstraction layer of all the radios.
 
 Note: I'm note sure yet if it's possible to build an interesting **HAL**.
 
