@@ -38,6 +38,12 @@ Note: I'm note sure yet if it's possible to build an interesting **HAL**.
 
 This directory contains a **platform.io** library compatible on multiple platforms.
 
+<!-- arduino -->
+<u>`arduino/`</u>:
+
+This directory contains a **arduino** library. This library is less complex than the **platform.io** one.
+
+
 <!-- linux -->
 <u>`linux/`</u>:
 
