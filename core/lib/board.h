@@ -14,22 +14,19 @@ extern "C"
         int spi_clck_speed;
     } liblora_dev_t;
 
-    typedef struct liblora_board_t
-    {
-        // SPI
-        int (*spi_open)(liblora_dev_t* dev, void* userdata);
-        int (*spi_transfer)(liblora_dev_t* dev, uint8_t* buffer, int len, void* userdata);
+    // SPI
+    int liblora_board_spi_open(liblora_dev_t* dev, void* userdata);
+    int liblora_board_spi_transfer(liblora_dev_t* dev, uint8_t* buffer, int len, void* userdata);
 
-        // SPIO
-        int (*gpio_setup)(void* userdata);
-        int (*gpio_mode)(int pin, int mode, void* userdata);
-        int (*gpio_write)(int pin, int val, void* userdata);
-        int (*gpio_read)(int pin, int *val, void* userdata);
-        int (*gpio_attach_interrupt)(int pin, int type, void (*callback)(void), void* userdata);
+    // GPIO
+    int liblora_board_gpio_setup(void* userdata);
+    int liblora_board_gpio_mode(int pin, int mode, void* userdata);
+    int liblora_board_gpio_write(int pin, int val, void* userdata);
+    int liblora_board_gpio_read(int pin, int *val, void* userdata);
+    int liblora_board_gpio_attach_interrupt(int pin, int type, void (*callback)(void), void* userdata);
 
-        // TIME
-        void (*wait)(int ms, void* userdata);
-    } liblora_board_t;
+    // TIME
+    void liblora_board_wait(int ms, void* userdata);
 
 #ifdef __cplusplus
 }

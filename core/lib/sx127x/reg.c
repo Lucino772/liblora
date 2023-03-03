@@ -3,61 +3,61 @@
 #include "./reg.h"
 #include "../board.h"
 
-static int reg_r(liblora_dev_t *dev, liblora_board_t *board, uint8_t addr, uint8_t *val, void* userdata)
+static int reg_r(liblora_dev_t *dev, uint8_t addr, uint8_t *val, void* userdata)
 {
     uint8_t buffer[2];
     buffer[0] = addr & 0x7F;
     buffer[1] = 0x00;
 
-    board->spi_transfer(dev, buffer, 2, userdata);
+    liblora_board_spi_transfer(dev, buffer, 2, userdata);
     *val = buffer[1];
     return 0;
 }
 
-static int reg_w(liblora_dev_t *dev, liblora_board_t *board, uint8_t addr, uint8_t val, void* userdata)
+static int reg_w(liblora_dev_t *dev, uint8_t addr, uint8_t val, void* userdata)
 {
     uint8_t buffer[2];
     buffer[0] = addr | 0x80;
     buffer[1] = val;
 
-    board->spi_transfer(dev, buffer, 2, userdata);
+    liblora_board_spi_transfer(dev, buffer, 2, userdata);
     return 0;
 }
 
-static int reg_rmw(liblora_dev_t *dev, liblora_board_t *board, uint8_t addr, uint8_t offset, uint8_t len, uint8_t val, void* userdata)
+static int reg_rmw(liblora_dev_t *dev, uint8_t addr, uint8_t offset, uint8_t len, uint8_t val, void* userdata)
 {
     uint8_t curr, mask, _new;
 
     if (offset + val > 8)
         return -1;
 
-    reg_r(dev, board, addr, &curr, userdata);
+    reg_r(dev, addr, &curr, userdata);
     mask = ((1 << len) - 1) << offset;
     _new = (curr & ~mask) | ((val << offset) & mask);
-    reg_w(dev, board, addr, _new, userdata);
+    reg_w(dev, addr, _new, userdata);
 
     return 0;
 }
 
-static int reg_rb(liblora_dev_t *dev, liblora_board_t *board, uint8_t addr, uint8_t *buf, int len, void* userdata)
+static int reg_rb(liblora_dev_t *dev, uint8_t addr, uint8_t *buf, int len, void* userdata)
 {
     uint8_t buffer[len + 1];
     memset(buffer, 0, sizeof(buffer));
     buffer[0] = addr & 0x7F;
 
-    board->spi_transfer(dev, buffer, len + 1, userdata);
+    liblora_board_spi_transfer(dev, buffer, len + 1, userdata);
     memcpy(buf, &buffer[1], len);
     return 0;
 }
 
-static int reg_wb(liblora_dev_t *dev, liblora_board_t *board, uint8_t addr, uint8_t *buf, int len, void* userdata)
+static int reg_wb(liblora_dev_t *dev, uint8_t addr, uint8_t *buf, int len, void* userdata)
 {
     uint8_t buffer[len + 1];
     memset(buffer, 0, sizeof(buffer));
     memcpy(&buffer[1], buf, len);
     buffer[0] = addr & 0x80;
 
-    board->spi_transfer(dev, buffer, len + 1, userdata);
+    liblora_board_spi_transfer(dev, buffer, len + 1, userdata);
     return 0;
 }
 
@@ -79,13 +79,13 @@ static int check_valid(liblora_sx127x_reg_t reg, uint8_t mode, bool chunk)
     return 0;
 }
 
-static int check_access(liblora_dev_t *dev, liblora_board_t *board, liblora_sx127x_reg_t reg, void* userdata)
+static int check_access(liblora_dev_t *dev, liblora_sx127x_reg_t reg, void* userdata)
 {
     uint8_t opmode, expected;
 
     if (reg.access != SX127x_REG_SHARED)
     {
-        if (reg_r(dev, board, SX127x_REG_ADDR(LIBLORA_SX127x_REG_OPMODE_LR_MODE), &opmode, userdata) != 0)
+        if (reg_r(dev, SX127x_REG_ADDR(LIBLORA_SX127x_REG_OPMODE_LR_MODE), &opmode, userdata) != 0)
         {
             return -1;
         }
@@ -103,51 +103,51 @@ static int check_access(liblora_dev_t *dev, liblora_board_t *board, liblora_sx12
     return 0;
 }
 
-int liblora_sx127x_reg_read(liblora_dev_t *dev, liblora_board_t *board, uint32_t reg, uint8_t *val, void* userdata)
+int liblora_sx127x_reg_read(liblora_dev_t *dev, uint32_t reg, uint8_t *val, void* userdata)
 {
     uint8_t temp, ret;
 
     liblora_sx127x_reg_t _reg = SX127x_REG_PARSE(reg);
-    if (check_valid(_reg, SX127x_REG_MODE_R, false) == -1 || check_access(dev, board, _reg, userdata) == -1)
+    if (check_valid(_reg, SX127x_REG_MODE_R, false) == -1 || check_access(dev, _reg, userdata) == -1)
         return -1;
 
-    ret = reg_r(dev, board, _reg.addr, &temp, userdata);
+    ret = reg_r(dev, _reg.addr, &temp, userdata);
     *val = (temp >> _reg.offset) & ((1 << _reg.len) - 1);
     return ret;
 }
 
-int liblora_sx127x_reg_readb(liblora_dev_t *dev, liblora_board_t *board, uint32_t reg, uint8_t *buf, int len, void* userdata)
+int liblora_sx127x_reg_readb(liblora_dev_t *dev, uint32_t reg, uint8_t *buf, int len, void* userdata)
 {
     liblora_sx127x_reg_t _reg = SX127x_REG_PARSE(reg);
-    if (check_valid(_reg, SX127x_REG_MODE_R, true) == -1 || check_access(dev, board, _reg, userdata) == -1)
+    if (check_valid(_reg, SX127x_REG_MODE_R, true) == -1 || check_access(dev, _reg, userdata) == -1)
         return -1;
 
-    return reg_rb(dev, board, _reg.addr, buf, len, userdata);
+    return reg_rb(dev, _reg.addr, buf, len, userdata);
 }
 
-int liblora_sx127x_reg_write(liblora_dev_t *dev, liblora_board_t *board, uint32_t reg, uint8_t val, void* userdata)
+int liblora_sx127x_reg_write(liblora_dev_t *dev, uint32_t reg, uint8_t val, void* userdata)
 {
     liblora_sx127x_reg_t _reg = SX127x_REG_PARSE(reg);
-    if (check_valid(_reg, SX127x_REG_MODE_W, false) == -1 || check_access(dev, board, _reg, userdata) == -1)
+    if (check_valid(_reg, SX127x_REG_MODE_W, false) == -1 || check_access(dev, _reg, userdata) == -1)
         return -1;
 
     if (_reg.offset == 0 && _reg.len == 8)
     {
-        return reg_w(dev, board, _reg.addr, val, userdata);
+        return reg_w(dev, _reg.addr, val, userdata);
     }
     else
     {
-        return reg_rmw(dev, board, _reg.addr, _reg.offset, _reg.len, val, userdata);
+        return reg_rmw(dev, _reg.addr, _reg.offset, _reg.len, val, userdata);
     }
 
     return 0;
 }
 
-int liblora_sx127x_reg_writeb(liblora_dev_t *dev, liblora_board_t *board, uint32_t reg, uint8_t *buf, int len, void* userdata)
+int liblora_sx127x_reg_writeb(liblora_dev_t *dev, uint32_t reg, uint8_t *buf, int len, void* userdata)
 {
     liblora_sx127x_reg_t _reg = SX127x_REG_PARSE(reg);
-    if (check_valid(_reg, SX127x_REG_MODE_W, true) == -1 || check_access(dev, board, _reg, userdata) == -1)
+    if (check_valid(_reg, SX127x_REG_MODE_W, true) == -1 || check_access(dev, _reg, userdata) == -1)
         return -1;
 
-    return reg_wb(dev, board, _reg.addr, buf, len, userdata);
+    return reg_wb(dev, _reg.addr, buf, len, userdata);
 }
