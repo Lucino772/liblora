@@ -40,15 +40,15 @@ int liblora_board_gpio_attach_interrupt(int pin, int edge_type, void (*callback)
 // com.h
 int liblora_board_spi_open(liblora_dev_t* dev, void* userdata)
 {
-    liblora_board_gpio_mode(dev->spi_ss, OUTPUT);
+    liblora_board_gpio_mode(dev->spi_ss, OUTPUT, userdata);
     return wiringPiSPISetup(dev->spi_dev, dev->spi_clck_speed);
 }
 
 int liblora_board_spi_transfer(liblora_dev_t* dev, uint8_t* buffer, int len, void* userdata)
 {
-    liblora_board_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_LOW);
+    liblora_board_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_LOW, userdata);
     int nread = wiringPiSPIDataRW(dev->spi_dev, buffer, len);
-    liblora_board_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_HIGH);
+    liblora_board_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_HIGH, userdata);
 
     if (nread > 0)
         return nread;

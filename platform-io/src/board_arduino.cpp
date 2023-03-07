@@ -43,7 +43,7 @@ int liblora_board_gpio_attach_interrupt(int pin, int edge_type, void (*callback)
 // com.h
 int liblora_board_spi_open(liblora_dev_t *dev, void* userdata)
 {
-    liblora_board_gpio_mode(dev->spi_ss, LIBLORA_BOARD_GPIO_MODE_OUTPUT);
+    liblora_board_gpio_mode(dev->spi_ss, LIBLORA_BOARD_GPIO_MODE_OUTPUT, userdata);
     SPI.begin();
     return 0;
 }
@@ -51,11 +51,11 @@ int liblora_board_spi_open(liblora_dev_t *dev, void* userdata)
 int liblora_board_spi_transfer(liblora_dev_t *dev, uint8_t *buffer, int len, void* userdata)
 {
     // FIXME: Check if transfer returns something
-    liblora_board_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_LOW);
+    liblora_board_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_LOW, userdata);
     SPI.beginTransaction(SPISettings(8e6, MSBFIRST, SPI_MODE0));
     SPI.transfer(buffer, len);
     SPI.endTransaction();
-    liblora_board_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_HIGH);
+    liblora_board_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_HIGH, userdata);
 
     return len;
 }
