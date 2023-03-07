@@ -40,7 +40,7 @@ extern "C"
         double packet_duration;
     } liblora_toa_stats_t;
 
-    void liblora_toa_stats_update(liblora_toa_stats_t *stats)
+    void liblora_toa_stats_update(liblora_toa_stats_t *stats);
 
 #ifdef __cplusplus
 }
