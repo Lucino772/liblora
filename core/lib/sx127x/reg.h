@@ -29,12 +29,12 @@
         ((uint32_t)mode << 1) |                         \
         (uint32_t)sign
 
-#define SX127x_REG_ACCESS(val) (val >> 20) && 0x03
-#define SX127x_REG_ADDR(val) (val >> 12) && 0xFF
-#define SX127x_REG_OFFSET(val) (val >> 9) && 0x07
-#define SX127x_REG_LEN(val) (val >> 5) && 0x0F
-#define SX127x_REG_MODE(val) (val >> 1) && 0x0F
-#define SX127x_REG_SIGN(val) val && 0x01
+#define SX127x_REG_ACCESS(val) (val >> 20) & 0x03
+#define SX127x_REG_ADDR(val) (val >> 12) & 0xFF
+#define SX127x_REG_OFFSET(val) (val >> 9) & 0x07
+#define SX127x_REG_LEN(val) (val >> 5) & 0x0F
+#define SX127x_REG_MODE(val) (val >> 1) & 0x0F
+#define SX127x_REG_SIGN(val) val & 0x01
 
 typedef struct liblora_sx127x_reg_s
 {
