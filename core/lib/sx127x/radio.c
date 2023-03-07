@@ -70,12 +70,18 @@ int liblora_sx127x_init(liblora_sx127x_radio_t *radio, long freq, uint8_t sf, ui
     }
 
     if (liblora_board_spi_open(radio->dev, radio->userdata) == -1)
+    {
+        printf("Failed to open spi device\n");
         return -1;
+    }
 
     // check version
     liblora_sx127x_reg_read(radio->dev, LIBLORA_SX127x_REG_VERSION, &ver, radio->userdata);
     if (ver != 0x12)
+    {
+        printf("Wrong device version: %i\n", ver);
         return -1;
+    }
 
     // sleep & lora
     liblora_sx127x_opmode_t curr_opmode = liblora_sx127x_opmode_read(radio);
