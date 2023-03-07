@@ -8,7 +8,7 @@ void liblora_toa_stats_update(liblora_toa_stats_t *stats)
     // set when the symbols len exceeds 16ms
     bool low_data_rate_optimize;
 
-    stats->symbols_rate = bw / (1 << sf);
+    stats->symbols_rate = stats->bandwidth / (1 << stats->spreading_factor);
     stats->symbols_len = 1 / stats->symbols_rate;
     low_data_rate_optimize = stats->symbols_len > 16;
 
