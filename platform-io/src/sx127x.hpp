@@ -12,6 +12,10 @@ public:
 
     // Init (public)
     int init(long freq, uint8_t sf, uint8_t bw);
+    
+    // calbacks
+    void onrx(void (*onrx)(liblora_sx127x_packet_t));
+    void ontx(void (*ontx)(void));
 
     // opmode (public)
     void sleep();

@@ -24,6 +24,17 @@ int SX127x::init(long freq, uint8_t sf, uint8_t bw)
     return liblora_sx127x_init(&m_radio);
 }
 
+void SX127x::onrx(void (*onrx)(liblora_sx127x_packet_t))
+{
+    m_radio.onrx = onrx;
+}
+
+void SX127x::ontx(void (*ontx)(void))
+{
+    m_radio.ontx = ontx;
+}
+
+
 void SX127x::sleep()
 {
     liblora_sx127x_sleep(&m_radio);
