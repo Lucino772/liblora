@@ -108,6 +108,8 @@ int liblora_sx127x_reg_read(liblora_dev_t *dev, uint32_t reg, uint8_t *val, void
 {
     uint8_t temp, ret;
 
+    printf("Reading value of reg %i\n", reg);
+
     liblora_sx127x_reg_t _reg = SX127x_REG_PARSE(reg);
     if (check_valid(_reg, SX127x_REG_MODE_R, false) == -1 || check_access(dev, _reg, userdata) == -1)
         return -1;
