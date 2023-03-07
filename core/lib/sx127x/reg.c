@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 
 #include "./reg.h"
 #include "../board.h"
