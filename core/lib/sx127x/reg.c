@@ -112,6 +112,7 @@ int liblora_sx127x_reg_read(liblora_dev_t *dev, uint32_t reg, uint8_t *val, void
         return -1;
 
     ret = reg_r(dev, _reg.addr, &temp, userdata);
+    printf("Value of reg '%i' = '%i'\n", _reg.addr, ret);
     *val = (temp >> _reg.offset) & ((1 << _reg.len) - 1);
     return ret;
 }
