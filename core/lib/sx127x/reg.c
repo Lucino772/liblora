@@ -141,6 +141,14 @@ int liblora_sx127x_reg_readb(liblora_dev_t *dev, uint32_t reg, uint8_t *buf, int
 
 int liblora_sx127x_reg_write(liblora_dev_t *dev, uint32_t reg, uint8_t val, void* userdata)
 {
+    printf("Write value to reg %i %i\n", reg, val);
+    printf("Reg Access: %i\n", SX127x_REG_ACCESS(reg));
+    printf("Reg Addr: %i\n", SX127x_REG_ADDR(reg));
+    printf("Reg Offset: %i\n", SX127x_REG_OFFSET(reg));
+    printf("Reg Len: %i\n", SX127x_REG_LEN(reg));
+    printf("Reg Mode: %i\n", SX127x_REG_MODE(reg));
+    printf("Reg Sign: %i\n", SX127x_REG_SIGN(reg));
+
     liblora_sx127x_reg_t _reg = SX127x_REG_PARSE(reg);
     if (check_valid(_reg, SX127x_REG_MODE_W, false) == -1 || check_access(dev, _reg, userdata) == -1)
         return -1;
