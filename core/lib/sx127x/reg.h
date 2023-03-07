@@ -47,7 +47,7 @@ typedef struct liblora_sx127x_reg_s
 } liblora_sx127x_reg_t;
 
 #define SX127x_REG_PARSE(val)       \
-    liblora_sx127x_reg_t{           \
+    {                               \
         SX127x_REG_ACCESS(val),     \
             SX127x_REG_ADDR(val),   \
             SX127x_REG_OFFSET(val), \
