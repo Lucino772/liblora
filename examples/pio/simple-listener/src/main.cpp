@@ -25,6 +25,7 @@ void on_receive(liblora_sx127x_packet_t pkt)
 
 void radio1_interrupt_dio0()
 {
+    printf("Interrupt !\n");
     radio.check_irq();
 }
 
