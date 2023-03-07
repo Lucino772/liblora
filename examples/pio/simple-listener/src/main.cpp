@@ -49,8 +49,8 @@ int main()
     else
     {
         printf("Ready !\n");
-        while (running) {}
-        printf("Done !\n");
+        while (running == true);
+        printf("Done %i !\n", running);
     }
 
     radio.sleep();
