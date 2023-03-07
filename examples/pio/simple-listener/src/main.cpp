@@ -43,9 +43,15 @@ int main()
     radio.config_interrupt(&radio1_interrupt_dio0);
 
     if (!radio.recv(true))
-        perror("Failed to put in RX_CONT mode");
+    {
+        perror("Failed to put in RX_CONT mode\n");
+    }
     else
-        while (running);
+    {
+        printf("Ready !\n");
+        while (running) {}
+        printf("Done !\n");
+    }
 
     radio.sleep();
     return 0;
