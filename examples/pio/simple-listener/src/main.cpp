@@ -49,7 +49,9 @@ int main()
     else
     {
         printf("Ready !\n");
-        while (running == true);
+        while (running == true) {
+            __asm__("nop");
+        }
         printf("Done %i !\n", running);
     }
 
