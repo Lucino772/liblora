@@ -91,12 +91,16 @@ static int check_access(liblora_dev_t *dev, liblora_sx127x_reg_t reg, void* user
             return -1;
         }
 
+        printf("OPMODE LR MODE %i\n", opmode & 0x80);
+
         // !!! Special Case: LoRa Mode with access to FSK registers
         expected = (opmode & 0x80) > 0 ? SX127x_REG_LORA : SX127x_REG_FSK;
         if ((opmode & 0xC0) > 0 && reg.addr >= 0x0D && reg.addr <= 0x3F)
         {
             expected = SX127x_REG_FSK;
         }
+
+        printf("OPMODE ACCESS EX: %i %i\n", reg.access, expected);
 
         return (reg.access == expected) > 0 ? 0 : -1;
     }
