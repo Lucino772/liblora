@@ -38,13 +38,13 @@ int liblora_board_gpio_attach_interrupt(int pin, int edge_type, void (*callback)
 }
 
 // com.h
-int liblora_board_spi_open(liblora_com_dev_t* dev, void* userdata)
+int liblora_board_spi_open(liblora_dev_t* dev, void* userdata)
 {
     liblora_gpio_mode(dev->spi_ss, OUTPUT);
     return wiringPiSPISetup(dev->spi_dev, dev->spi_clck_speed);
 }
 
-int liblora_board_spi_transfer(liblora_com_dev_t* dev, uint8_t* buffer, int len, void* userdata)
+int liblora_board_spi_transfer(liblora_dev_t* dev, uint8_t* buffer, int len, void* userdata)
 {
     liblora_gpio_write(dev->spi_ss, LIBLORA_BOARD_GPIO_STATE_LOW);
     int nread = wiringPiSPIDataRW(dev->spi_dev, buffer, len);

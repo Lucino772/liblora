@@ -207,7 +207,7 @@ void liblora_sx127x_config_bandwidth(liblora_sx127x_radio_t *radio, uint8_t bw, 
 {
     liblora_sx127x_reg_write(radio->dev, LIBLORA_SX127x_REG_LORA_MOD_CFG1_BW, bw, radio->userdata);
 
-    if (optimize && bw == LIBLORA_SX127x_BW_7_8)
+    if (optimize && bw == LIBLORA_SX127x_BW_007_80)
         liblora_sx127x_config_high_bw_optimization(radio, true);
     else
         liblora_sx127x_config_high_bw_optimization(radio, false);
@@ -578,7 +578,7 @@ int liblora_sx127x_check_irq(liblora_sx127x_radio_t *radio)
 
 int liblora_sx127x_config_interrupt(liblora_sx127x_radio_t *radio, void (*callback)(void))
 {
-    return liblora_gpio_interrupt(
+    return liblora_board_gpio_attach_interrupt(
         radio->dio0,
         LIBLORA_BOARD_GPIO_EDGE_RISING,
         callback);

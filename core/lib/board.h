@@ -3,6 +3,17 @@
 
 #include <stdint.h>
 
+#define LIBLORA_BOARD_GPIO_MODE_INPUT       0
+#define LIBLORA_BOARD_GPIO_MODE_OUTPUT      1
+
+#define LIBLORA_BOARD_GPIO_STATE_LOW        0
+#define LIBLORA_BOARD_GPIO_STATE_HIGH       1
+
+#define LIBLORA_BOARD_GPIO_EDGE_SETUP       0
+#define LIBLORA_BOARD_GPIO_EDGE_FALLING     1
+#define LIBLORA_BOARD_GPIO_EDGE_RISING      2
+#define LIBLORA_BOARD_GPIO_EDGE_BOTH        3
+
 #ifdef __cplusplus
 extern "C"
 {
