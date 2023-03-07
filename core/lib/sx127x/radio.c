@@ -581,5 +581,6 @@ int liblora_sx127x_config_interrupt(liblora_sx127x_radio_t *radio, void (*callba
     return liblora_board_gpio_attach_interrupt(
         radio->dio0,
         LIBLORA_BOARD_GPIO_EDGE_RISING,
-        callback);
+        callback,
+        radio->userdata);
 }
