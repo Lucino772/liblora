@@ -35,6 +35,7 @@ static int reg_rmw(liblora_dev_t *dev, uint8_t addr, uint8_t offset, uint8_t len
     reg_r(dev, addr, &curr, userdata);
     mask = ((1 << len) - 1) << offset;
     _new = (curr & ~mask) | ((val << offset) & mask);
+    printf("REG RWM %i\n", _new);
     reg_w(dev, addr, _new, userdata);
 
     return 0;
