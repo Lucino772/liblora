@@ -1,9 +1,10 @@
-#ifndef _LIBLORA_CORE_LIB_SX127x_REG_H_
-#define _LIBLORA_CORE_LIB_SX127x_REG_H_
+#ifndef _LIBLORA_CORE_LIB_RADIOS_SX127x_REG_H_
+#define _LIBLORA_CORE_LIB_RADIOS_SX127x_REG_H_
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "../board.h"
+
+#include "liblora/core/board.h"
 
 // Access Mode
 #define SX127x_REG_FSK 1

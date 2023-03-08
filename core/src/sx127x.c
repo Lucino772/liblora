@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "./radio.h"
-#include "./reg.h"
-#include "../board.h"
+#include "liblora/core/radios/sx127x.h"
+#include "liblora/core/radios/sx127x_reg.h"
+#include "liblora/core/board.h"
 
 /**============================================
  *               OPMODE

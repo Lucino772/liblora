@@ -1,9 +1,10 @@
-#ifndef _LIBLORA_CORE_LIB_SX127x_RADIO_H_
-#define _LIBLORA_CORE_LIB_SX127x_RADIO_H_
+#ifndef _LIBLORA_CORE_LIB_RADIOS_SX127x_H_
+#define _LIBLORA_CORE_LIB_RADIOS_SX127x_H_
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "../board.h"
+
+#include "liblora/core/board.h"
 
 /**============================================
  *               CONFIG

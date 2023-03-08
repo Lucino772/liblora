@@ -1,8 +1,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "./reg.h"
-#include "../board.h"
+#include "liblora/core/radios/sx127x_reg.h"
+#include "liblora/core/board.h"
 
 static int reg_r(liblora_dev_t *dev, uint8_t addr, uint8_t *val, void* userdata)
 {
