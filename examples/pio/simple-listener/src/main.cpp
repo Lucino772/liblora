@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <csignal>
 
-#include <sx127x.hpp>
+#include "liblora/sx127x.hpp"
 
 SX127x radio(7, 0, 0, 6, 500000);
 bool running = true;
