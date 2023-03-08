@@ -96,7 +96,7 @@ static int check_access(liblora_dev_t *dev, liblora_sx127x_reg_t reg, void* user
 
         // !!! Special Case: LoRa Mode with access to FSK registers
         expected = (opmode & 0x80) > 0 ? SX127x_REG_LORA : SX127x_REG_FSK;
-        if ((opmode & 0xC0) > 0 && reg.addr >= 0x0D && reg.addr <= 0x3F)
+        if ((opmode & 0xC0) == 0xC0 && reg.addr >= 0x0D && reg.addr <= 0x3F)
         {
             expected = SX127x_REG_FSK;
         }
