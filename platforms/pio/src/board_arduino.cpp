@@ -5,7 +5,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-#include "./lib/board.h"
+#include "liblora/core/board.h"
 
 // gpio.h
 int liblora_board_gpio_setup(void* userdata)

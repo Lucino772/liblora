@@ -1,8 +1,8 @@
-#ifndef _LIBLORA_CORE_CLASSES_SX127x_H_
-#define _LIBLORA_CORE_CLASSES_SX127x_H_
+#ifndef _LIBLORA_CLASSES_SX127x_H_
+#define _LIBLORA_CLASSES_SX127x_H_
 
-#include "./lib/sx127x/radio.h"
-#include "./lib/board.h"
+#include "liblora/core/radios/sx127x.h"
+#include "liblora/core/board.h"
 
 class SX127x
 {

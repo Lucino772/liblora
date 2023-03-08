@@ -1,4 +1,4 @@
-#include "sx127x.hpp"
+#include "liblora/sx127x.hpp"
 
 SX127x::SX127x(int dio0, int rst, int spi_dev, int spi_ss, int spi_clck_speed)
 {
