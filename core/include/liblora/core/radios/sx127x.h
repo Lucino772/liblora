@@ -1,3 +1,9 @@
+/**
+ * @file sx127x.h
+ * @author Lucino772
+ * @date 8 Mars 2023
+ */
+
 #ifndef _LIBLORA_CORE_LIB_RADIOS_SX127x_H_
 #define _LIBLORA_CORE_LIB_RADIOS_SX127x_H_
 

@@ -1,3 +1,9 @@
+/**
+ * @file board.h
+ * @author Lucino772
+ * @date 8 Mars 2023
+ */
+
 #ifndef _LIBLORA_CORE_LIB_BOARD_H_
 #define _LIBLORA_CORE_LIB_BOARD_H_
 
