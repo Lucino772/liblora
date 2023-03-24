@@ -46,6 +46,10 @@ extern "C"
         double packet_duration;
     } liblora_toa_stats_t;
 
+    /**
+     * @brief Compute stats about the time on air
+     * @param stats A pointer to store the results
+    */
     void liblora_toa_stats_update(liblora_toa_stats_t *stats);
 
 #ifdef __cplusplus

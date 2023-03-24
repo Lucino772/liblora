@@ -10,6 +10,8 @@ Welcome to liblora's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   references/index
+
 
 Indices and tables
 ==================
