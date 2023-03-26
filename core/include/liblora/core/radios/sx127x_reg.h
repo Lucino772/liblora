@@ -12,22 +12,40 @@
 
 #include "liblora/core/board.h"
 
-// Access Mode
+/**
+ * @defgroup SX127x_REG_ACCESS_MODE SX127x Register Access mode
+ * This groups contains the different access modes
+ * @{
+*/
+/** Registers defined whith this mode are only available in FSK mode */
 #define SX127x_REG_FSK 1
+/** Registers defined whith this mode are only available in LORA mode */
 #define SX127x_REG_LORA 2
+/** Registers defined whith this mode are available in both FSK & LORA mode */
 #define SX127x_REG_SHARED (SX127x_REG_FSK | SX127x_REG_LORA)
+/** @} */
 
-// Register Mode
+/**
+ * @defgroup SX127x_REG_MODE SX127x Register Mode
+ * 
+ * @{
+*/
 #define SX127x_REG_MODE_R 1
 #define SX127x_REG_MODE_W 2
 #define SX127x_REG_MODE_C 4
 #define SX127x_REG_MODE_T 8
-
 #define SX127x_REG_MODE_RW (SX127x_REG_MODE_R | SX127x_REG_MODE_W)
 #define SX127x_REG_MODE_RC (SX127x_REG_MODE_R | SX127x_REG_MODE_C)
 #define SX127x_REG_MODE_WT (SX127x_REG_MODE_W | SX127x_REG_MODE_T)
 #define SX127x_REG_MODE_RWT (SX127x_REG_MODE_R | SX127x_REG_MODE_W | SX127x_REG_MODE_T)
+/**@}*/
 
+/**
+ * @defgroup SX127x_REG_UTILS SX127x Utilities to define registers
+ * 
+ * @{
+ */
+/** Define a register */
 #define SX127x_R(access, addr, offset, len, mode, sign) \
     ((uint32_t)access << 20) |                          \
         ((uint32_t)addr << 12) |                        \
@@ -36,11 +54,17 @@
         ((uint32_t)mode << 1) |                         \
         (uint32_t)sign
 
+/** Get the ACCESS_MODE of a register */
 #define SX127x_REG_ACCESS(val) ((val) >> 20) & 0x03
+/** Get the addr of a register */
 #define SX127x_REG_ADDR(val) ((val) >> 12) & 0xFF
+/** Get the bits offset of a register */
 #define SX127x_REG_OFFSET(val) ((val) >> 9) & 0x07
+/** Get the bits len of a register */
 #define SX127x_REG_LEN(val) ((val) >> 5) & 0x0F
+/** Get the MODE of a register */
 #define SX127x_REG_MODE(val) ((val) >> 1) & 0x0F
+/** Get the sign of a register */
 #define SX127x_REG_SIGN(val) (val) & 0x01
 
 typedef struct liblora_sx127x_reg_s
@@ -53,6 +77,7 @@ typedef struct liblora_sx127x_reg_s
     bool sign;
 } liblora_sx127x_reg_t;
 
+/** Parse a register value into @ref liblora_sx127x_reg_s */
 #define SX127x_REG_PARSE(val)       \
     {                               \
         SX127x_REG_ACCESS(val),     \
@@ -62,8 +87,13 @@ typedef struct liblora_sx127x_reg_s
             SX127x_REG_MODE(val),   \
             SX127x_REG_SIGN(val)    \
     }
+/** @} */
 
-/* Common registers to mode FSK & LoRa */
+/**
+ * @defgroup SX127x_REGS_SHARED SX127x Registers available in FSK & LORA mode
+ * 
+ * @{
+*/
 #define LIBLORA_SX127x_REG_FIFO SX127x_R(SX127x_REG_SHARED, 0x00, 0, 8, SX127x_REG_MODE_RW, 0)
 
 #define LIBLORA_SX127x_REG_OPMODE_DEV_MODE SX127x_R(SX127x_REG_SHARED, 0x01, 0, 3, SX127x_REG_MODE_RW, 0)
@@ -101,8 +131,13 @@ typedef struct liblora_sx127x_reg_s
 #define LIBLORA_SX127x_REG_AGC_THRESH4 SX127x_R(SX127x_REG_SHARED, 0x64, 4, 4, SX127x_REG_MODE_RW, 0)
 #define LIBLORA_SX127x_REG_AGC_THRESH5 SX127x_R(SX127x_REG_SHARED, 0x64, 0, 4, SX127x_REG_MODE_RW, 0)
 #define LIBLORA_SX127x_REG_PLL_BW SX127x_R(SX127x_REG_SHARED, 0x70, 6, 2, SX127x_REG_MODE_RW, 0)
+/** @} */
 
-/* Registers specific to LoRa */
+/**
+ * @defgroup SX127x_REGS_LORA SX127x Registers available only in LORA mode
+ * 
+ * @{
+*/
 #define LIBLORA_SX127x_REG_LORA_OPMODE_SHARED_ACCESS SX127x_R(SX127x_REG_LORA, 0x01, 6, 1, SX127x_REG_MODE_RW, 0)
 #define LIBLORA_SX127x_REG_LORA_FIFO_ADDR_PTR SX127x_R(SX127x_REG_LORA, 0x0D, 0, 8, SX127x_REG_MODE_RW, 0)
 #define LIBLORA_SX127x_REG_LORA_FIFO_TX_BASE_ADDR SX127x_R(SX127x_REG_LORA, 0x0E, 0, 8, SX127x_REG_MODE_RW, 0)
@@ -164,8 +199,13 @@ typedef struct liblora_sx127x_reg_s
 #define LIBLORA_SX127x_REG_LORA_SYNC_WORD SX127x_R(SX127x_REG_LORA, 0x39, 0, 8, SX127x_REG_MODE_RW, 0)
 #define LIBLORA_SX127x_REG_LORA_HIGH_BW_OPTI2 SX127x_R(SX127x_REG_LORA, 0x3A, 0, 8, SX127x_REG_MODE_RW, 0)
 #define LIBLORA_SX127x_REG_LORA_INVERT_IQ2 SX127x_R(SX127x_REG_LORA, 0x3B, 0, 8, SX127x_REG_MODE_RW, 0)
+/** @} */
 
-/* Registers specific to FSK */
+/**
+ * @defgroup SX127x_REGS_FSK SX127x Registers available only in FSK mode
+ * 
+ * @{
+*/
 #define LIBLORA_SX127x_REG_FSK_MODE_TYPE SX127x_R(SX127x_REG_FSK, 0x01, 5, 2, SX127x_REG_MODE_RW, 0)
 
 #define LIBLORA_SX127x_REG_FSK_BITRATE_MSB SX127x_R(SX127x_REG_FSK, 0x02, 0, 8, SX127x_REG_MODE_RW, 0)
@@ -286,16 +326,56 @@ typedef struct liblora_sx127x_reg_s
 
 #define LIBLORA_SX127x_REG_FSK_PLL_FAST_HOP_ON SX127x_R(SX127x_REG_FSK, 0x44, 5, 3, SX127x_REG_MODE_RW, 0)
 #define LIBLORA_SX127x_REG_FSK_BITRATE_FRAC SX127x_R(SX127x_REG_FSK, 0x5D, 0, 4, SX127x_REG_MODE_RW, 0)
+/** @} */
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
+    /**
+     * @defgroup SX127x_REG_FUNCS SX127x Registers write and read functions
+     * 
+     * @{
+    */
+    /**
+     * @brief Read a single byte from a register
+     * @param dev
+     * @param reg
+     * @param val
+     * @param userdata
+    */
     int liblora_sx127x_reg_read(liblora_dev_t *dev, uint32_t reg, uint8_t *val, void* userdata);
+    
+    /**
+     * @brief Read multiple bytes from a register
+     * @param dev
+     * @param reg
+     * @param buff
+     * @param len
+     * @param userdata
+    */
     int liblora_sx127x_reg_readb(liblora_dev_t *dev, uint32_t reg, uint8_t *buff, int len, void* userdata);
+    
+    /**
+     * @brief Write a single byte in a register
+     * @param dev
+     * @param reg
+     * @param val
+     * @param userdata
+    */
     int liblora_sx127x_reg_write(liblora_dev_t *dev, uint32_t reg, uint8_t val, void* userdata);
+    
+        /**
+     * @brief Write multiple bytes in a register
+     * @param dev
+     * @param reg
+     * @param buff
+     * @param len
+     * @param userdata
+    */
     int liblora_sx127x_reg_writeb(liblora_dev_t *dev, uint32_t reg, uint8_t *buff, int len, void* userdata);
+    /** @} */
 
 #ifdef __cplusplus
 }
