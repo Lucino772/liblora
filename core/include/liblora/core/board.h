@@ -29,7 +29,8 @@ extern "C"
      * @struct liblora_dev_t
      * @brief This struct represents a SPI device
     */
-    typedef struct liblora_dev_t {
+    typedef struct liblora_dev_s 
+    {
         int spi_dev;
         int spi_ss;
         int spi_clck_speed;
