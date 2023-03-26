@@ -1,23 +1,29 @@
+/**
+ * @file utils.h
+ * @author Lucino772
+ * @date 8 Mars 2023
+ */
+
 #ifndef _LIBLORA_CORE_LIB_UTILS_H_
 #define _LIBLORA_CORE_LIB_UTILS_H_
 
 #include <stdint.h>
 #include <stdbool.h>
 
-
 #define LIBLORA_UTILS_CR_4_5 1
 #define LIBLORA_UTILS_CR_4_6 2
 #define LIBLORA_UTILS_CR_4_7 3
 #define LIBLORA_UTILS_CR_4_8 4
 
-#define LIBLORA_UTILS_TOA_STATS_INIT(payload_bytes)  { 125, 7, LIBLORA_UTILS_CR_4_8, 8, payload_bytes, true, false };
+#define LIBLORA_UTILS_TOA_STATS_INIT(payload_bytes) {125, 7, LIBLORA_UTILS_CR_4_8, 8, payload_bytes, true, false};
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-    typedef struct {
+    typedef struct
+    {
         uint16_t bandwidth;
         uint8_t spreading_factor;
         uint8_t coding_rate;
@@ -40,6 +46,10 @@ extern "C"
         double packet_duration;
     } liblora_toa_stats_t;
 
+    /**
+     * @brief Compute stats about the time on air
+     * @param stats A pointer to store the results
+    */
     void liblora_toa_stats_update(liblora_toa_stats_t *stats);
 
 #ifdef __cplusplus
