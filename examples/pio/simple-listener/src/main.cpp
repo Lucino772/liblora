@@ -13,11 +13,25 @@ void sig_term_handler(int sig)
     running = false;
 }
 
+void write_output(liblora_sx127x_packet_t pkt)
+{
+    FILE* fp;
+    fp = fopen("./radio_output.dat", "a");
+    if (fp == NULL)
+    {
+        printf("Failed to write to output !");
+        return;
+    }
+    fprintf(fp, "%i %s\n", pkt.size, pkt.buffer);
+    fclose(fp);
+}
+
 void on_receive(liblora_sx127x_packet_t pkt)
 {
     if (pkt.size > 0)
     {
         printf("Packet received (%i bytes): %s\n", pkt.size, pkt.buffer);
+        write_output(pkt);
     } else {
         printf("Something went wrong !\n");
     }
